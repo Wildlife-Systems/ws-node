@@ -1,1 +1,21 @@
+#!/bin/bash
 
+#Update system
+sudo apt-get update
+sudo apt-get -y dist-upgrade
+
+#Install the abstraction layers
+wget -O - https://github.com/wildlife-systems/sound-device-control/raw/master/install | sudo bash
+wget -O - https://github.com/wildlife-systems/pi-pwr/raw/master/install | sudo bash
+
+#Security setup
+
+#Check if device is registered or should run as standalone
+
+#Setup sound device
+
+#Setup imaging device
+
+#Install runtime script
+
+#Reboot
