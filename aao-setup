@@ -32,7 +32,7 @@ fi
 sdc-inst $SNDDEV
 
 #Setup imaging device
-if [[ "$SNDDEV" == "manual" ]]; then
+if [[ "$IMGDEV" == "manual" ]]; then
   idc-inst list
   echo $""
   echo "Select camera to install:"
