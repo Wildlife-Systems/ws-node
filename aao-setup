@@ -17,13 +17,23 @@ wget -O - https://github.com/wildlife-systems/pi-pwr/raw/master/install | sudo b
 SECURITY="manual"
 SNDDEV="manual"
 IMGDEV="manual"
+PASSWD="manual"
 
 #Check if device is registered or should run as standalone
 #replace manuals above with settings
 
-#Security setup
+#Security: Default password
 PWSALT=`sudo grep pi /etc/shadow | awk -F\$ '{print $3}'`
+PWPI=`sudo grep pi /etc/shadow | awk -F: '{print $2}'`
+PWDFT=`mkpasswd -m sha-512 raspberry $PWSALT`
 
+#Security: Firewall
+if [[ "$PASSWD" == "manual" ]]; then
+  if [["$PWPI" == "$PWDFT" ]]; then
+    echo "Default password (raspberry) is in use for user pi. This must be changed."
+    passwd
+  fi
+fi
 
 #Setup sound device
 if [[ "$SNDDEV" == "manual" ]]; then
