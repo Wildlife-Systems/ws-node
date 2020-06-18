@@ -1,4 +1,4 @@
-wget https://github.com/Wildlife-Systems/aao-node/raw/master/setup
-chmod +x setup
-./setup
-rm ./setup
+wget https://github.com/Wildlife-Systems/aao-node/raw/master/aao-setup
+chmod +x aao-setup
+chown root:root aao-setup
+mv aao-setup /usr/bin
