@@ -12,7 +12,6 @@ wget -O - https://github.com/wildlife-systems/sound-device-control/raw/master/in
 wget -O - https://github.com/Wildlife-Systems/image-device-control/raw/master/install | sudo bash
 wget -O - https://github.com/wildlife-systems/pi-pwr/raw/master/install | sudo bash
 
-
 #Set defaults
 SECURITY="manual"
 SNDDEV="manual"
@@ -68,3 +67,7 @@ idc-inst $IMGDEV
 #Save settings to file
 
 #Reboot
+echo $""
+echo "Press enter to reboot"
+read REBOOT
+sudo reboot
