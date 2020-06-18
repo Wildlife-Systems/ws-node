@@ -8,7 +8,9 @@ sudo apt -y autoclean
 
 #Install the abstraction layers
 wget -O - https://github.com/wildlife-systems/sound-device-control/raw/master/install | sudo bash
+wget -O - https://github.com/Wildlife-Systems/image-device-control/raw/master/install | sudo bash
 wget -O - https://github.com/wildlife-systems/pi-pwr/raw/master/install | sudo bash
+
 
 #Set defaults
 SECURITY="manual"
@@ -24,12 +26,19 @@ IMGDEV="manual"
 if [[ "$SNDDEV" == "manual" ]]; then
   sdc-inst list
   echo $""
-  echo "Select card to install:"
+  echo "Select sound device to install:"
   read SNDDEV
 fi
 sdc-inst $SNDDEV
 
 #Setup imaging device
+if [[ "$SNDDEV" == "manual" ]]; then
+  idc-inst list
+  echo $""
+  echo "Select camera to install:"
+  read IMGDEV
+fi
+idc-inst $IMGDEV
 
 #Install runtime script
 
