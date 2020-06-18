@@ -29,7 +29,7 @@ PWDFT=`mkpasswd -m sha-512 raspberry $PWSALT`
 
 #Security: Firewall
 if [[ "$PASSWD" == "manual" ]]; then
-  if [["$PWPI" == "$PWDFT" ]]; then
+  if [[ "$PWPI" == "$PWDFT" ]]; then
     echo "Default password (raspberry) is in use for user pi. This must be changed."
     passwd
   fi
