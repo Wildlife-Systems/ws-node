@@ -12,7 +12,7 @@ wget -O - https://github.com/wildlife-systems/pi-pwr/raw/master/install | sudo b
 
 #Set defaults
 SECURITY="manual"
-SNDDEV="manual2"
+SNDDEV="manual"
 IMGDEV="manual"
 
 #Check if device is registered or should run as standalone
