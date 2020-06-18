@@ -3,7 +3,7 @@
 #Update system
 sudo apt-get update
 sudo apt-get -y dist-upgrade
-sudo apt-get install -y whois
+sudo apt-get install -y whois ufw
 sudo apt -y autoremove
 sudo apt -y autoclean
 
@@ -18,6 +18,7 @@ SECURITY="manual"
 SNDDEV="manual"
 IMGDEV="manual"
 PASSWD="manual"
+FIREWALL="manual"
 
 #Check if device is registered or should run as standalone
 #replace manuals above with settings
@@ -34,6 +35,15 @@ if [[ "$PASSWD" == "manual" ]]; then
 fi
 
 #Security: Firewall
+if [[ "$FIREWALL" == "manual" ]]; then
+  echo $""
+  echo "Allow SSH through the firewall? (y/n)"
+  read ALLOWSSH
+  if [[ "$ALLOWSSH" == "y" ]]; then
+    sudo ufw allow ssh
+  fi
+  echo y | sudo ufw enable
+fi
 
 #Setup sound device
 if [[ "$SNDDEV" == "manual" ]]; then
