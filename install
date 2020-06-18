@@ -1,0 +1,4 @@
+wget https://github.com/Wildlife-Systems/aao-node/raw/master/setup
+chmod +x setup
+./setup
+rm ./setup
