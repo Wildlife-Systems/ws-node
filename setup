@@ -8,14 +8,22 @@ sudo apt-get -y dist-upgrade
 wget -O - https://github.com/wildlife-systems/sound-device-control/raw/master/install | sudo bash
 wget -O - https://github.com/wildlife-systems/pi-pwr/raw/master/install | sudo bash
 
-#Security setup
+#Set defaults
+SECURITY="manual"
+SNDDEV="manual"
+IMGDEV="manual"
 
 #Check if device is registered or should run as standalone
+#replace manuals above with settings
+
+#Security setup
 
 #Setup sound device
 
 #Setup imaging device
 
 #Install runtime script
+
+#Save settings to file
 
 #Reboot
