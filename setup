@@ -21,8 +21,9 @@ IMGDEV="manual"
 #Security setup
 
 #Setup sound device
+sdc-inst list
 if [[ "$SNDDEV" == "manual" ]]; then
-  sdc-inst
+  sdc-inst dog
   echo $""
   echo "Select card to install:"
   read SNDDEV
