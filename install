@@ -3,6 +3,10 @@ chmod +x aao-setup
 chown root:root aao-setup
 mv aao-setup /usr/bin
 
+wget https://github.com/Wildlife-Systems/aao-node/raw/master/aao-runchmod +x aao-setup
+chown root:root aao-run
+mv aao-run /usr/bin
+
 echo $""
 echo "aao-node has been installed. Do you want to setup this node now? (y/n)"
 read PROMPT
