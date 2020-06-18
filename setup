@@ -19,6 +19,10 @@ IMGDEV="manual"
 #Security setup
 
 #Setup sound device
+if [[ "$SNDDEV" == "manual" ]]; then
+  read SNDDEV
+fi
+sdc-inst $SNDDEV
 
 #Setup imaging device
 
