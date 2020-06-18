@@ -6,7 +6,7 @@ This software is used up a Raspberry Pi as an Automated Acoustic Observatory nod
 
 The installation script will install the software required to configure a node, and ask the user if they wish to configure the node. 
 
-If the node is not configured suring install it can be configured by running `aao-setup` from the terminal.
+If the node is not configured during install it can be configured by running `aao-setup` from the terminal.
 
 ## Development
 * Development of this script was done as part of the Levehulme Trust funded Automated Acoustic Observatories project at the University of York.
