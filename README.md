@@ -1,5 +1,5 @@
 # aao-node
-This software is used up a Raspberry Pi as an Automated Acoustic Observatory node.
+This software is used to setup a Raspberry Pi as an Automated Acoustic Observatory node.
 
 ## Installing the software
 `sudo bash -c "$(wget -O - https://github.com/Wildlife-Systems/aao-node/raw/master/install)"`
