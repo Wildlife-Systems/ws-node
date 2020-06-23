@@ -2,7 +2,7 @@
 CONFIG=$(cat /home/pi/et.c)
 
 #Config
-COUNTDOWN=0
+COUNTDOWN=5
 
 
 #Check mode
