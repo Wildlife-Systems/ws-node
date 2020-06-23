@@ -4,9 +4,7 @@
 			"pwrled",
 			"actled"
 		],
-		"recorder": "arecord",
-		"uploader": "s3cmd",
-		"bucket": "wildlife-systems"
+		"on": [],
 	},
 	"run": [{
 		"0": {
