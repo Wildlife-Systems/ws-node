@@ -8,7 +8,7 @@
 		"uploader": "s3cmd",
 		"bucket": "wildlife-systems"
 	},
-	"run": {
+	"run": [{
 		"0": {
 			"action": "record",
 			"duration": 5
@@ -20,5 +20,5 @@
 		"2": {
 			"action": "upload"
 		}
-	}
+	}]
 }
