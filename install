@@ -3,7 +3,8 @@ chmod +x aao-setup
 chown root:root aao-setup
 mv aao-setup /usr/bin
 
-wget https://github.com/Wildlife-Systems/aao-node/raw/master/aao-runchmod +x aao-setup
+wget https://github.com/Wildlife-Systems/aao-node/raw/master/aao-run
+chmod +x aao-run
 chown root:root aao-run
 mv aao-run /usr/bin
 
