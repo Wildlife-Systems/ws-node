@@ -59,7 +59,7 @@ if [[ "$FIREWALL" == "manual" ]]; then
   fi
   echo y | sudo ufw enable
 else
-  if [ "$FIREWALL" == "allow-ssh-in" ]]; then
+  if [[ "$FIREWALL" == "allow-ssh-in" ]]; then
     sudo ufw allow ssh
     echo y | sudo ufw enable
   fi
