@@ -1,3 +1,24 @@
-SOUND CAPTURE D=60 
-SOUND UPLOAD BG
-SLEEP 60
+{
+	"init": {
+		"off": [
+			"pwrled",
+			"actled"
+		],
+		"recorder": "arecord",
+		"uploader": "s3cmd",
+		"bucket": "wildlife-systems"
+	},
+	"run": {
+		"0": {
+			"action": "record",
+			"duration": 5
+		},
+		"1": {
+			"action": "sleep",
+			"duration": 5
+		},
+		"2": {
+			"action": "upload"
+		}
+	}
+}
