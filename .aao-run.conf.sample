@@ -5,6 +5,7 @@
 			"actled"
 		],
 		"on": [],
+		"mode":"continuous"
 	},
 	"run": [{
 		"0": {
