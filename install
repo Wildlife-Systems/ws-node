@@ -17,9 +17,7 @@ echo "aao-node has been installed. Do you want to setup this node now? (y/n)"
 read PROMPT
 
 if [[ "$PROMPT" == "y" ]]; then
-  su pi
-  aao-setup
-  exit
+  su -c "aao-setup" - pi
 else
   echo "You can setup later by running aao-setup."
 fi
