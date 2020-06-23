@@ -1,1 +1,80 @@
 #!/bin/bash
+CONFIG=$(cat /home/pi/et.c)
+
+#Config
+COUNTDOWN=0
+
+
+#Check mode
+#
+#If called from cron skip the init
+if [[ "$1" != "cron" ]]; then
+  #Initialise
+  pi-pwr off $(echo "$CONFIG" | jq -r '.init .off[]' | tr '\n' ' ')
+  pi-pwr on $(echo "$CONFIG" | jq -r '.init .on[]' | tr '\n' ' ')
+  FNTYPE=$(echo "$CONFIG" | jq -r '.init .filenaming')
+  echo Preparing to run...
+  aao-indicate countdown $COUNTDOWN
+  aao-indicate heartbeat &
+fi
+
+while true;
+do
+
+case $FNTYPE in
+        timestamp)
+                FN=$(date +%s)
+                ;;
+        *)
+                echo "Incorrect filename pattern"
+                exit 1;
+                ;;
+esac
+
+
+	N=$(echo "$CONFIG" | jq -r ".run | length")
+	I=0
+	while [ $I  -lt $N ];
+	do
+		ACTION=`echo $CONFIG| jq -r ".run[$I] .action"`
+        	case  $ACTION in
+			record)
+				DURATION=`echo $CONFIG| jq -r ".run[$I] .duration"`
+				CHANNELS=`echo $CONFIG| jq -r ".run[$I] .channels"`
+				BITRATE=`echo $CONFIG| jq -r ".run[$I] .bitrate"`
+				FORMAT=`echo $CONFIG| jq -r ".run[$I] .format"`
+				aao-indicate record "arecord -c $CHANNELS -r $BITRATE -f $FORMAT -d $DURATION $FN.wav"
+				;;
+			sleep)
+				sleep `echo $CONFIG| jq -r ".run[$I] .duration"`
+				;;
+			upload)
+				;;
+			upload-delete)
+				METHOD=`echo $CONFIG| jq -r ".run[$I] .method"`
+				UPPATH=`echo $CONFIG| jq -r ".run[$I] .path"`
+				EXTENSION=`echo $CONFIG| jq -r ".run[$I] .extension"`
+				ASYNC=`echo $CONFIG| jq -r ".run[$I] .async"`
+				case $METHOD in
+					s3cmd)
+						S3UP=`eval echo "s3cmd put $FN.$EXTENSION s3://$UPPATH"`
+						S3UP="$S3UP && rm $FN.$EXTENSION"
+						if [[ "$ASYNC" == "true" ]]; then
+						  S3UP="( $S3UP )&"; echo $S3UP
+						fi
+						eval "$S3UP";
+						;;
+				esac
+				;;
+			clearup)
+				;;
+		esac
+
+		I=$(($I + 1))
+		aao-indicate heartbeat
+	done
+#Exit after one iteration if called form cron
+if [[ "$1" == "cron" ]]; then
+	exit 0
+fi
+done
