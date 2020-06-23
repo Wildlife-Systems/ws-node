@@ -1,0 +1,59 @@
+#!/bin/bash
+
+#Initial state
+ATINIT=`awk -F'[][]' '{print $2}' /sys/class/leds/led0/trigger`
+ABINIT=`cat /sys/class/leds/led0/brightness`
+PTINIT=`awk -F'[][]' '{print $2}' /sys/class/leds/led1/trigger`
+PBINIT=`cat /sys/class/leds/led1/brightness`
+
+#Indicators
+case "$1" in
+        list)
+                echo $ATINIT
+                echo $ABINIT
+                echo $PTINIT
+                echo $PBINIT
+                exit 0
+                ;;
+
+        heartbeat)
+                x=1
+                while [ $x -le 3 ]
+                do
+                        pi-pwr on actled &
+                        pi-pwr off pwrled &
+                        sleep 0.1
+                        pi-pwr on pwrled &
+                        pi-pwr off actled
+                        sleep 0.1
+                        x=$(( $x + 1 ))
+                done
+                ;;
+       countdown)
+                pi-pwr off actled &
+                x=$(("$2"))
+                while [ 0 -le $x ]
+                do
+                        pi-pwr off pwrled &
+                        sleep 0.5
+                        pi-pwr on pwrled &
+                        sleep 0.5
+                        x=$(( $x - 1 ))
+                done
+                ;;
+
+        record)
+                pi-pwr off actled &
+                pi-pwr on pwrled &
+                $2
+                pi-pwr off pwrled &
+                ;;
+        *)
+                exit 1
+esac
+
+#Restore initial state
+echo $ABINIT | sudo tee /sys/class/leds/led0/brightness >> /dev/null
+echo $ATINIT | sudo tee /sys/class/leds/led0/trigger >> /dev/null
+echo $PBINIT | sudo tee /sys/class/leds/led1/brightness >> /dev/null
+echo $PTINIT | sudo tee /sys/class/leds/led1/trigger >> /dev/null
