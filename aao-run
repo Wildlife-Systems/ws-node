@@ -1,5 +1,5 @@
 #!/bin/bash
-CONFIG=$(cat /home/pi/et.c)
+CONFIG=$(cat /home/pi/.aao.conf)
 
 #Config
 COUNTDOWN=5
