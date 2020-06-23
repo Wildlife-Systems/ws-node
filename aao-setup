@@ -66,6 +66,10 @@ else
 fi
 
 #Setup hostname
+if [[ "$DEVNAME" == "raspberrypi" ]]; then
+  DEVNAME="raspberrypi"
+fi
+sudo hostnamectl set-hostname $DEVNAME
 
 #Setup sound device
 if [[ "$SNDDEV" == "manual" ]]; then
