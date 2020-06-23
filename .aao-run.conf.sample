@@ -8,16 +8,15 @@
 		"mode":"continuous"
 	},
 	"run": [{
-		"0": {
 			"action": "record",
 			"duration": 5
 		},
-		"1": {
+		{
 			"action": "sleep",
 			"duration": 5
 		},
-		"2": {
+		{
 			"action": "upload"
 		}
-	}]
+	]
 }
