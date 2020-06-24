@@ -13,6 +13,11 @@ chmod +x aao-indicate
 chown root:root aao-indicate
 mv aao-indicate /usr/bin
 
+wget https://github.com/Wildlife-Systems/aao-node/raw/master/aao-network
+chmod +x aao-network
+chown root:root aao-network
+mv aao-network /usr/bin
+
 wget https://raw.githubusercontent.com/Wildlife-Systems/aao-node/master/.aao.conf
 
 wget https://github.com/Wildlife-Systems/aao-node/raw/master/inst/aao-node-profile.d.sh
