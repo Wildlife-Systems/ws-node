@@ -1,22 +1,26 @@
 #!/bin/bash
-CONFIG=$(cat /home/pi/.aao.conf)
+I=`ps -A | grep aao-run | wc -l`
+if [[ $I -gt 2 ]]; then
+	exit 0
+fi
 
 #Config
+CONFIG=$(cat /home/pi/.aao.conf)
 COUNTDOWN=5
+FNTYPE=$(echo "$CONFIG" | jq -r '.init .filenaming')
 
-
-#Check mode
-#
-#If called from cron skip the init
-if [[ "$1" != "cron" ]]; then
-  #Initialise
+function onOff {
   pi-pwr off $(echo "$CONFIG" | jq -r '.init .off[]' | tr '\n' ' ')
   pi-pwr on $(echo "$CONFIG" | jq -r '.init .on[]' | tr '\n' ' ')
-  FNTYPE=$(echo "$CONFIG" | jq -r '.init .filenaming')
+}
+
+if [[ "$1" != "cron" ]]; then
   echo Preparing to run...
   aao-indicate countdown $COUNTDOWN
   aao-indicate heartbeat &
 fi
+
+
 
 while true;
 do
@@ -36,6 +40,8 @@ esac
 	I=0
 	while [ $I  -lt $N ];
 	do
+		pi-pwr off $(echo "$CONFIG" | jq -r ".run[$I] .off[]" | tr '\n' ' ')
+  		pi-pwr on $(echo "$CONFIG" | jq -r ".run[$I] .on[]" | tr '\n' ' ')
 		ACTION=`echo $CONFIG| jq -r ".run[$I] .action"`
         	case  $ACTION in
 			record)
@@ -72,6 +78,7 @@ esac
 
 		I=$(($I + 1))
 		aao-indicate heartbeat
+	onOff
 	done
 #Exit after one iteration if called form cron
 if [[ "$1" == "cron" ]]; then
