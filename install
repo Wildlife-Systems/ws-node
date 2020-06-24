@@ -13,6 +13,8 @@ chmod +x aao-indicate
 chown root:root aao-indicate
 mv aao-indicate /usr/bin
 
+wget https://raw.githubusercontent.com/Wildlife-Systems/aao-node/master/.aao.conf
+
 echo $""
 echo "aao-node has been installed. Do you want to setup this node now? (y/n)"
 read PROMPT
