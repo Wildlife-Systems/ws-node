@@ -1,0 +1,8 @@
+#!/bin/bash
+
+ping -c1 $1 2>&1 > /dev/null
+while [[ $? != 0 ]];
+do
+	sleep 1
+	ping -c1 $1 2>&1 > /dev/null
+done
