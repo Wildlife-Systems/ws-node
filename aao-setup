@@ -99,7 +99,7 @@ idc-inst $IMGDEV
 #Install runtime script
 I=`grep 'aao-run' /etc/rc.local`
 if [[ $I == 1 ]]; then
-  sed -i -e '$i \\n/usr/bin/aao-run  &\n' /etc/rc.local
+  sudo sed -i -e '$i \\n/usr/bin/aao-run  &\n' /etc/rc.local
 fi
 
 #Save settings to file
