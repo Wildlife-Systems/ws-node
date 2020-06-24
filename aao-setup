@@ -3,10 +3,13 @@
 #Update system
 sudo apt-get update
 sudo apt-get -y dist-upgrade
-sudo apt-get install -y whois ufw jq s3cmd
+sudo apt-get install -y whois ufw jq
 
-#This is required by s3cmd but not a dependency
-sudo apt-get install -y python3-distutils
+if [[ -f /boot/.s3cfg ]] || [[ -f /home/pi/.s3cfg ]]; then
+  sudo apt-get install -y s3cmd
+  #This is required by s3cmd but not a dependency
+  sudo apt-get install -y python3-distutils
+fi
 
 sudo apt -y autoremove
 sudo apt -y autoclean
