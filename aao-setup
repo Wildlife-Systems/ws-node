@@ -52,7 +52,9 @@ PWDFT=`mkpasswd -m sha-512 raspberry $PWSALT`
 if [[ "$PASSWD" == "manual" ]]; then
   if [[ "$PWPI" == "$PWDFT" ]]; then
     echo "Default password (raspberry) is in use for user pi. This must be changed."
-    passwd
+    if [[ "$1" != "unattended" ]]; then
+      passwd
+    fi
   fi
 fi
 
@@ -102,9 +104,16 @@ if [[ $? == 1 ]]; then
   sudo sed -i -e '$i \\n/usr/bin/aao-run  &\n' /etc/rc.local
 fi
 
+if [[ "$1" == "unattended" ]]; then
+  exit 0;
+fi
+
 #Save settings to file
 
 #Reboot
+if [[ "$1" == "unattended" ]]; then
+  sudoo reboot
+fi
 echo $""
 echo "Press enter to reboot"
 read REBOOT
