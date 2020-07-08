@@ -13,7 +13,7 @@ fi
 
 RESETUP=$(jq -r '."resetup"'<<< "$STATUS")
 if [[ "$RESETUP" == 1 ]]; then
-	aao-setup
+	aao-setup unattended
 fi
 
 REINSTALL=$(jq -r '."reinstall"'<<< "$STATUS")
