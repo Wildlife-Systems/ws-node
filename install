@@ -1,3 +1,9 @@
+wget https://github.com/Wildlife-Systems/aao-node/raw/master/aao-heartbeat
+chmod +x aao-heartbeat
+chown root:root aao-heartbeat
+mv aao-heartbeat /usr/bin
+aao-heartbeat installing
+
 wget https://github.com/Wildlife-Systems/aao-node/raw/master/aao-setup
 chmod +x aao-setup
 chown root:root aao-setup
