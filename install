@@ -36,11 +36,4 @@ if [[ "$1" == "unattended" ]]; then
 fi
 
 echo $""
-echo "aao-node has been installed. Do you want to setup this node now? (y/n)"
-read PROMPT
-
-if [[ "$PROMPT" == "y" ]]; then
-  su -c "aao-setup" - pi
-else
-  echo "You can setup later by running aao-setup."
-fi
+echo "Please run aao-setup to configure this node."
