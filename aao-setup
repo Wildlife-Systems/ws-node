@@ -1,4 +1,5 @@
 #!/bin/bash
+aao-heartbeat setup
 
 #Update system
 sudo apt-get update
