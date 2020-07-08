@@ -1,0 +1,22 @@
+#!/bin/bash
+
+TOKEN=$(<.aao-token)
+SERIAL=$(cat /proc/cpuinfo | grep Serial | cut -d ' ' -f 2)
+STATUS=$(curl -s --data "token=$TOKEN&serial=$SERIAL&status=$1" https://devices.wildlife.systems/heartbeat/index.php)
+
+echo "$STATUS"
+
+REBOOT=$(jq -r '."reboot"'<<< "$STATUS")
+if [[ "$REBOOT" == 1 ]]; then
+	sudo reboot
+fi
+
+RESETUP=$(jq -r '."resetup"'<<< "$STATUS")
+if [[ "$RESETUP" == 1 ]]; then
+	aao-setup
+fi
+
+REINSTALL=$(jq -r '."reinstall"'<<< "$STATUS")
+if [[ "$REINSTALL" == 1 ]]; then
+	sudo bash -c "$(wget -O - https://github.com/Wildlife-Systems/aao-node/raw/master/install)"
+fi
