@@ -10,8 +10,12 @@ done
 #Initial state
 ATINIT=`awk -F'[][]' '{print $2}' /sys/class/leds/led0/trigger`
 ABINIT=`cat /sys/class/leds/led0/brightness`
-PTINIT=`awk -F'[][]' '{print $2}' /sys/class/leds/led1/trigger`
-PBINIT=`cat /sys/class/leds/led1/brightness`
+
+MODEL=$(cat /proc/cpuinfo | grep 'Revision' | awk '{print $3}' | sed 's/^ *//g' | sed 's/ *$//g')
+if [[ "$MODEL" != "000d" ]]; then
+  PTINIT=`awk -F'[][]' '{print $2}' /sys/class/leds/led1/trigger`
+  PBINIT=`cat /sys/class/leds/led1/brightness`
+fi
 
 
 #Indicators
@@ -67,5 +71,9 @@ esac
 #Restore initial state
 echo $ABINIT | sudo tee /sys/class/leds/led0/brightness >> /dev/null
 echo $ATINIT | sudo tee /sys/class/leds/led0/trigger >> /dev/null
-echo $PBINIT | sudo tee /sys/class/leds/led1/brightness >> /dev/null
-echo $PTINIT | sudo tee /sys/class/leds/led1/trigger >> /dev/null
+
+MODEL=$(cat /proc/cpuinfo | grep 'Revision' | awk '{print $3}' | sed 's/^ *//g' | sed 's/ *$//g')
+if [[ "$MODEL" != "000d" ]]; then
+  echo $PBINIT | sudo tee /sys/class/leds/led1/brightness >> /dev/null
+  echo $PTINIT | sudo tee /sys/class/leds/led1/trigger >> /dev/null
+fi
