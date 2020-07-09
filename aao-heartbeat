@@ -6,9 +6,9 @@ SERIAL=$(cat /proc/cpuinfo | grep Serial | cut -d ' ' -f 2)
 TEMPRAW=$(cat /sys/class/thermal/thermal_zone0/temp)
 TEMPC=$(($TEMPRAW /1000))
 
-STATUS=$(curl -s --data "token=$TOKEN&serial=$SERIAL&status=$1&temp=$TEMPC" https://devices.wildlife.systems/heartbeat/index.php)
-TEMPRAW=$(cat /sys/class/thermal/thermal_zone0/temp)
-TEMPC=$(($TEMPRAW /1000))
+MODEL=$(tr -d '\0' </proc/device-tree/model)
+
+STATUS=$(curl -s --data "token=$TOKEN&serial=$SERIAL&model=$MODEL&status=$1&temp=$TEMPC" https://devices.wildlife.systems/heartbe$
 
 REBOOT=$(jq -r '."reboot"'<<< "$STATUS")
 if [[ "$REBOOT" == 1 ]]; then
