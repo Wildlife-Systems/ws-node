@@ -2,9 +2,13 @@
 
 TOKEN=$(<.aao-token)
 SERIAL=$(cat /proc/cpuinfo | grep Serial | cut -d ' ' -f 2)
-STATUS=$(curl -s --data "token=$TOKEN&serial=$SERIAL&status=$1" https://devices.wildlife.systems/heartbeat/index.php)
 
-echo "$STATUS"
+TEMPRAW=$(cat /sys/class/thermal/thermal_zone0/temp)
+TEMPC=$(($TEMPRAW /1000))
+
+STATUS=$(curl -s --data "token=$TOKEN&serial=$SERIAL&status=$1&temp=$TEMPC" https://devices.wildlife.systems/heartbeat/index.php)
+TEMPRAW=$(cat /sys/class/thermal/thermal_zone0/temp)
+TEMPC=$(($TEMPRAW /1000))
 
 REBOOT=$(jq -r '."reboot"'<<< "$STATUS")
 if [[ "$REBOOT" == 1 ]]; then
