@@ -8,7 +8,7 @@ TEMPC=$(($TEMPRAW /1000))
 
 MODEL=$(tr -d '\0' </proc/device-tree/model)
 
-STATUS=$(curl -s --data "token=$TOKEN&serial=$SERIAL&model=$MODEL&status=$1&temp=$TEMPC" https://devices.wildlife.systems/heartbe$
+STATUS=$(curl -s --data "token=$TOKEN&serial=$SERIAL&model=$MODEL&status=$1&temp=$TEMPC" https://devices.wildlife.systems/heartbeat/index.php)
 
 REBOOT=$(jq -r '."reboot"'<<< "$STATUS")
 if [[ "$REBOOT" == 1 ]]; then
