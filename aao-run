@@ -15,6 +15,7 @@ function onOff {
 }
 
 if [[ "$1" != "cron" ]]; then
+  aao-heartbeat countdown&
   echo Preparing to run...
   aao-indicate countdown $COUNTDOWN
   aao-indicate heartbeat &
@@ -43,6 +44,7 @@ esac
 		pi-pwr off $(echo "$CONFIG" | jq -r ".run[$I] .off[]" | tr '\n' ' ')
   		pi-pwr on $(echo "$CONFIG" | jq -r ".run[$I] .on[]" | tr '\n' ' ')
 		ACTION=`echo $CONFIG| jq -r ".run[$I] .action"`
+		aao-heartbeat $ACTION &
         	case  $ACTION in
 			record)
 				DURATION=`echo $CONFIG| jq -r ".run[$I] .duration"`
