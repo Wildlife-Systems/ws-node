@@ -1,4 +1,5 @@
 #!/bin/bash
+
 I=`ps -A | grep aao-run | wc -l`
 if [[ $I -gt 2 ]]; then
 	exit 0
@@ -44,6 +45,7 @@ esac
 		pi-pwr off $(echo "$CONFIG" | jq -r ".run[$I] .off[]" | tr '\n' ' ')
   		pi-pwr on $(echo "$CONFIG" | jq -r ".run[$I] .on[]" | tr '\n' ' ')
 		ACTION=`echo $CONFIG| jq -r ".run[$I] .action"`
+		echo $ACTION
 		aao-heartbeat $ACTION &
         	case  $ACTION in
 			record)
@@ -68,9 +70,9 @@ esac
 						S3UP=`eval echo "s3cmd put $FN.$EXTENSION s3://$UPPATH"`
 						S3UP="$S3UP && rm $FN.$EXTENSION"
 						if [[ "$ASYNC" == "true" ]]; then
-						  S3UP="( $S3UP )&"; echo $S3UP
+						  S3UP="( $S3UP )&";
 						fi
-						eval "$S3UP";
+						eval $S3UP
 						;;
 				esac
 				;;
