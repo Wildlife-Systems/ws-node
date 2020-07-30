@@ -102,7 +102,7 @@ idc-inst $IMGDEV
 #Install runtime script
 grep 'aao-run' /etc/rc.local > /dev/null
 if [[ $? == 1 ]]; then
-  sudo sed -i -e '$i \\n/usr/bin/aao-run  &\n' /etc/rc.local
+  sudo sed -i -e '$i \\nrunuser -l  pi -c /usr/bin/aao-run > out.txt 2>&1 &\n' /etc/rc.local
 fi
 
 if [[ "$1" == "unattended" ]]; then
