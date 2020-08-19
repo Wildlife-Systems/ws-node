@@ -76,7 +76,6 @@ esac
 						;;
 					mv)
 						MVUP=`eval echo "mv $FN.$EXTENSION $UPPATH"`
-						MVUP="$MVUP && rm $FN.$EXTENSION"
 						if [[ "$ASYNC" == "true" ]]; then
 						  MVUP="( $MVUP )&";
 						fi
