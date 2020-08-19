@@ -74,6 +74,14 @@ esac
 						fi
 						eval $S3UP
 						;;
+					mv)
+						MVUP=`eval echo "mv $FN.$EXTENSION $UPPATH"`
+						MVUP="$MVUP && rm $FN.$EXTENSION"
+						if [[ "$ASYNC" == "true" ]]; then
+						  MVUP="( $S3UP )&";
+						fi
+						eval $MVUP
+						;;
 				esac
 				;;
 			clearup)
