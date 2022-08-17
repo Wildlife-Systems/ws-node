@@ -9,5 +9,5 @@ The installation script will install the software required to configure a node, 
 If the node is not configured during install it can be configured by running `aao-setup` from the terminal.
 
 ## Development
-* Development of this script was done as part of the Levehulme Trust funded Automated Acoustic Observatories project at the University of York.
+* Development of this script was done as part of the Leverhulme Trust funded Automated Acoustic Observatories project at the University of York.
 * Additional development was undertaken as part of the Urban Nature Project at the Natural History Msueum, London.
