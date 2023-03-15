@@ -114,7 +114,7 @@ fi
 
 #Reboot
 if [[ "$1" == "unattended" ]]; then
-  sudoo reboot
+  sudo reboot
 fi
 echo $""
 echo "Press enter to reboot"
