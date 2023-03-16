@@ -1,25 +1,13 @@
 #!/bin/bash
 ws-heartbeat setup
 
-#Update system
-sudo apt-get update
-sudo apt-get -y dist-upgrade
-sudo apt-get install -y whois ufw jq
-
+#Setup s3cmd if .s3cfg is present
 if [[ -f /boot/.s3cfg ]] || [[ -f /home/pi/.s3cfg ]]; then
   sudo apt-get install -y s3cmd
   #This is required by s3cmd but not a dependency
   sudo apt-get install -y python3-distutils
 fi
 
-sudo apt -y autoremove
-sudo apt -y autoclean
-
-#Install the abstraction layers
-wget -O - https://raw.githubusercontent.com/Wildlife-Systems/sensor-control/main/install | sudo bash
-wget -O - https://github.com/wildlife-systems/sound-device-control/raw/master/install | sudo bash
-wget -O - https://github.com/Wildlife-Systems/image-device-control/raw/master/install | sudo bash
-wget -O - https://github.com/wildlife-systems/pi-pwr/raw/master/install | sudo bash
 
 #Set defaults
 DEVNAME="raspberrypi"
