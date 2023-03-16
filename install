@@ -1,3 +1,8 @@
+#Update system
+sudo apt-get update
+sudo apt-get -y dist-upgrade
+sudo apt-get install -y whois ufw jq
+
 wget https://github.com/Wildlife-Systems/ws-node/raw/master/ws-heartbeat
 chmod +x ws-heartbeat
 chown root:root ws-heartbeat
@@ -24,6 +29,12 @@ chown root:root ws-network
 mv ws-network /usr/bin
 
 wget https://raw.githubusercontent.com/Wildlife-Systems/ws-node/master/.ws.conf
+
+#Install the abstraction layers
+wget -O - https://raw.githubusercontent.com/Wildlife-Systems/sensor-control/main/install | sudo bash
+wget -O - https://github.com/wildlife-systems/sound-device-control/raw/master/install | sudo bash
+wget -O - https://github.com/Wildlife-Systems/image-device-control/raw/master/install | sudo bash
+wget -O - https://github.com/wildlife-systems/pi-pwr/raw/master/install | sudo bash
 
 if [[ "$1" == "unattended" ]]; then
   exit 0;
