@@ -1,5 +1,5 @@
 # ws-node
-This software is used to setup a Raspberry Pi as an Automated Acoustic Observatory node.
+This software is used to setup a Raspberry Pi as an Wildlife Systems node.
 
 ## Installing the software
 `sudo bash -c "$(wget -O - https://github.com/Wildlife-Systems/ws-node/raw/master/install)"`
@@ -9,5 +9,5 @@ The installation script will install the software required to configure a node, 
 If the node is not configured during install it can be configured by running `ws-setup` from the terminal.
 
 ## Development
-* Development of this script was done as part of the Leverhulme Trust funded Automated Acoustic Observatories project at the University of York.
+* Initial development of the node software was done as part of the Leverhulme Trust funded Automated Acoustic Observatories project at the University of York.
 * Additional development was undertaken as part of the Urban Nature Project at the Natural History Museum, London.
