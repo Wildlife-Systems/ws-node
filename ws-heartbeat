@@ -10,7 +10,8 @@ IPS=$(hostname -I)
 
 MODEL=$(tr -d '\0' </proc/device-tree/model)
 
-STATUS=$(curl -s --data "token=$TOKEN&serial=$SERIAL&model=$MODEL&status=$1&temp=$TEMPC&ips=$IPS" https://devices.wildlife.systems/heartbeat/index.php)
+#STATUS=$(curl -s --data "token=$TOKEN&serial=$SERIAL&model=$MODEL&status=$1&temp=$TEMPC&ips=$IPS" https://devices.wildlife.systems/heartbeat/index.php)
+#ToDo: Allow custom script
 
 REBOOT=$(jq -r '."reboot"'<<< "$STATUS")
 if [[ "$REBOOT" == 1 ]]; then
