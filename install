@@ -1,7 +1,7 @@
 #Update system
 sudo apt-get update
 sudo apt-get -y dist-upgrade
-sudo apt-get install -y whois ufw jq
+sudo apt-get install -y ufw jq
 
 wget https://github.com/Wildlife-Systems/ws-node/raw/master/ws-heartbeat
 chmod +x ws-heartbeat
