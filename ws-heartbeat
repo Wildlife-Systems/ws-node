@@ -1,6 +1,6 @@
 #!/bin/bash
 
-TOKEN=$(<.aao-token)
+TOKEN=$(<.ws-token)
 SERIAL=$(cat /proc/cpuinfo | grep Serial | cut -d ' ' -f 2)
 
 TEMPRAW=$(cat /sys/class/thermal/thermal_zone0/temp)
@@ -19,10 +19,10 @@ fi
 
 RESETUP=$(jq -r '."resetup"'<<< "$STATUS")
 if [[ "$RESETUP" == 1 ]]; then
-	aao-setup unattended
+	ws-setup unattended
 fi
 
 REINSTALL=$(jq -r '."reinstall"'<<< "$STATUS")
 if [[ "$REINSTALL" == 1 ]]; then
-	sudo bash -c "$(wget -O - https://github.com/Wildlife-Systems/aao-node/raw/master/install)"
+	sudo bash -c "$(wget -O - https://github.com/Wildlife-Systems/ws-node/raw/master/install)"
 fi

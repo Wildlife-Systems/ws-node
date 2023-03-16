@@ -1,5 +1,5 @@
 #!/bin/bash
-aao-heartbeat setup
+ws-heartbeat setup
 
 #Update system
 sudo apt-get update
@@ -29,10 +29,10 @@ PASSWD="manual"
 FIREWALL="manual"
 
 #Device serial
-AAOSERIAL=`grep Serial /proc/cpuinfo | cut -d ' ' -f 2`
+wsSERIAL=`grep Serial /proc/cpuinfo | cut -d ' ' -f 2`
 
 #Check if device is registered or should run as standalone
-URL="https://devices.wildlife.systems/info/?id=$AAOSERIAL"
+URL="https://devices.wildlife.systems/info/?id=$wsSERIAL"
 response=$(curl -s -w "\n%{http_code}" $URL)
 http_code=$(tail -n1 <<< "$response")  # get the last line
 content=$(sed '$ d' <<< "$response")   # get all but the last line which contains the status code
@@ -44,7 +44,7 @@ if [[ $http_code == "200" ]]; then
   FIREWALL=`echo $content | jq -r '."firewall"'`
 else
   echo "No matching device serial number found on https://devices.wildlife.systems"
-  echo "If  you want to add it before proceeding the serial number is $AAOSERIAL."
+  echo "If  you want to add it before proceeding the serial number is $wsSERIAL."
 fi
 
 #Security: Default password
@@ -101,9 +101,9 @@ fi
 idc-inst $IMGDEV
 
 #Install runtime script
-grep 'aao-run' /etc/rc.local > /dev/null
+grep 'ws-run' /etc/rc.local > /dev/null
 if [[ $? == 1 ]]; then
-  sudo sed -i -e '$i \\nrunuser -l  pi -c /usr/bin/aao-run > out.txt 2>&1 &\n' /etc/rc.local
+  sudo sed -i -e '$i \\nrunuser -l  pi -c /usr/bin/ws-run > out.txt 2>&1 &\n' /etc/rc.local
 fi
 
 if [[ "$1" == "unattended" ]]; then

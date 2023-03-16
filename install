@@ -1,33 +1,33 @@
-wget https://github.com/Wildlife-Systems/aao-node/raw/master/aao-heartbeat
-chmod +x aao-heartbeat
-chown root:root aao-heartbeat
-mv aao-heartbeat /usr/bin
+wget https://github.com/Wildlife-Systems/ws-node/raw/master/ws-heartbeat
+chmod +x ws-heartbeat
+chown root:root ws-heartbeat
+mv ws-heartbeat /usr/bin
 
-wget https://github.com/Wildlife-Systems/aao-node/raw/master/aao-setup
-chmod +x aao-setup
-chown root:root aao-setup
-mv aao-setup /usr/bin
+wget https://github.com/Wildlife-Systems/ws-node/raw/master/ws-setup
+chmod +x ws-setup
+chown root:root ws-setup
+mv ws-setup /usr/bin
 
-wget https://github.com/Wildlife-Systems/aao-node/raw/master/aao-run
-chmod +x aao-run
-chown root:root aao-run
-mv aao-run /usr/bin
+wget https://github.com/Wildlife-Systems/ws-node/raw/master/ws-run
+chmod +x ws-run
+chown root:root ws-run
+mv ws-run /usr/bin
 
-wget https://github.com/Wildlife-Systems/aao-node/raw/master/aao-indicate
-chmod +x aao-indicate
-chown root:root aao-indicate
-mv aao-indicate /usr/bin
+wget https://github.com/Wildlife-Systems/ws-node/raw/master/ws-indicate
+chmod +x ws-indicate
+chown root:root ws-indicate
+mv ws-indicate /usr/bin
 
-wget https://github.com/Wildlife-Systems/aao-node/raw/master/aao-network
-chmod +x aao-network
-chown root:root aao-network
-mv aao-network /usr/bin
+wget https://github.com/Wildlife-Systems/ws-node/raw/master/ws-network
+chmod +x ws-network
+chown root:root ws-network
+mv ws-network /usr/bin
 
-wget https://raw.githubusercontent.com/Wildlife-Systems/aao-node/master/.aao.conf
+wget https://raw.githubusercontent.com/Wildlife-Systems/ws-node/master/.ws.conf
 
 if [[ "$1" == "unattended" ]]; then
   exit 0;
 fi
 
 echo $""
-echo "Please run aao-setup to configure this node."
+echo "Please run ws-setup to configure this node."

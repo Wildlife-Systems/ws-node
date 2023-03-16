@@ -1,10 +1,10 @@
 #!/bin/bash
 
 #Wait for previous indicators
-I=$((`ps -A | grep aao-indicate | wc -l`))
+I=$((`ps -A | grep ws-indicate | wc -l`))
 while [[ $I -gt 2 ]];
 do
-	I="$((`ps -A | grep aao-indicate | wc -l`))";
+	I="$((`ps -A | grep ws-indicate | wc -l`))";
 done
 
 #Initial state

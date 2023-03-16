@@ -1,12 +1,12 @@
 #!/bin/bash
 
-I=`ps -A | grep aao-run | wc -l`
+I=`ps -A | grep ws-run | wc -l`
 if [[ $I -gt 2 ]]; then
 	exit 0
 fi
 
 #Config
-CONFIG=$(cat /home/pi/.aao.conf)
+CONFIG=$(cat /home/pi/.ws.conf)
 COUNTDOWN=5
 FNTYPE=$(echo "$CONFIG" | jq -r '.init .filenaming')
 
@@ -16,10 +16,10 @@ function onOff {
 }
 
 if [[ "$1" != "cron" ]]; then
-  aao-heartbeat countdown&
+  ws-heartbeat countdown&
   echo Preparing to run...
-  aao-indicate countdown $COUNTDOWN
-  aao-indicate heartbeat &
+  ws-indicate countdown $COUNTDOWN
+  ws-indicate heartbeat &
 fi
 
 
@@ -46,14 +46,14 @@ esac
   		pi-pwr on $(echo "$CONFIG" | jq -r ".run[$I] .on[]" | tr '\n' ' ')
 		ACTION=`echo $CONFIG| jq -r ".run[$I] .action"`
 		echo $ACTION
-		aao-heartbeat $ACTION &
+		ws-heartbeat $ACTION &
         	case  $ACTION in
 			record)
 				DURATION=`echo $CONFIG| jq -r ".run[$I] .duration"`
 				CHANNELS=`echo $CONFIG| jq -r ".run[$I] .channels"`
 				BITRATE=`echo $CONFIG| jq -r ".run[$I] .bitrate"`
 				FORMAT=`echo $CONFIG| jq -r ".run[$I] .format"`
-				aao-indicate record "arecord -c $CHANNELS -r $BITRATE -f $FORMAT -d $DURATION $FN.wav"
+				ws-indicate record "arecord -c $CHANNELS -r $BITRATE -f $FORMAT -d $DURATION $FN.wav"
 				;;
 			sleep)
 				sleep `echo $CONFIG| jq -r ".run[$I] .duration"`
@@ -88,7 +88,7 @@ esac
 		esac
 
 		I=$(($I + 1))
-		aao-indicate heartbeat
+		ws-indicate heartbeat
 	onOff
 	done
 #Exit after one iteration if called form cron
