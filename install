@@ -6,6 +6,7 @@ wget https://github.com/Wildlife-Systems/ws-node/raw/master/ws-heartbeat
 chmod +x ws-heartbeat
 chown root:root ws-heartbeat
 mv ws-heartbeat /usr/bin
+ws-heartbeat install
 
 wget https://github.com/Wildlife-Systems/ws-node/raw/master/ws-setup
 chmod +x ws-setup
