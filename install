@@ -36,6 +36,10 @@ if [[ "$OS_REPORTED" == "Debian GNU/Linux" ]]; then
         if [[ -f "/etc/apt/sources.list.d/raspi.list" ]]; then
                 OS="Raspbian"
         fi
+else
+        if [[ "$OS_REPORTED" == "Ubuntu" ]]; then
+                OS="Ubuntu"
+        fi
 fi
 CONF=$(jq --arg os $OS '.+{os:$os}' .ws.conf)
 echo "$CONF" > .ws.conf
