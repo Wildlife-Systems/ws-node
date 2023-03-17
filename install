@@ -37,7 +37,8 @@ if [[ "$OS_REPORTED" == "Debian GNU/Linux" ]]; then
                 OS="Raspbian"
         fi
 fi
-cat .ws.conf | jq --arg os $OS '.+{os:$os}' > .ws.conf
+CONF=$(jq --arg os $OS '.+{os:$os}' .ws.conf)
+echo "$CONF" > .ws.conf
 
 #Install the abstraction layers
 wget -O - https://raw.githubusercontent.com/Wildlife-Systems/sensor-control/main/install | sudo bash
