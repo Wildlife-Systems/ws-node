@@ -29,6 +29,15 @@ chown root:root ws-network
 mv ws-network /usr/bin
 
 wget https://raw.githubusercontent.com/Wildlife-Systems/ws-node/master/.ws.conf
+OS="UNKNOWN"
+OS_REPORTED=$(grep '^NAME=' /etc/os-release | cut -d '"' -f 2)
+if [[ "$OS_REPORTED" == "Debian GNU/Linux" ]]; then
+        OS="Debian"
+        if [[ -f "/etc/apt/sources.list.d/raspi.list" ]]; then
+                OS="Raspbian"
+        fi
+fi
+cat .ws.conf | jq --arg os $OS '.+{os:$os}' >> .ws.conf
 
 #Install the abstraction layers
 wget -O - https://raw.githubusercontent.com/Wildlife-Systems/sensor-control/main/install | sudo bash
