@@ -41,7 +41,7 @@ else
                 OS="Ubuntu"
                 wget https://github.com/Wildlife-Systems/ws-node/raw/master/os/ubuntu/etc/ws
                 chown root:root ws
-                mv ws-indicate /etc/sudoers.d
+                mv ws /etc/sudoers.d
         fi
 fi
 CONF=$(jq --arg os $OS '.+{os:$os}' .ws.conf)
