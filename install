@@ -1,6 +1,6 @@
 #Update system
-sudo apt-get update
-sudo apt-get install -y ufw jq
+apt-get update
+apt-get install -y ufw jq
 
 wget https://github.com/Wildlife-Systems/ws-node/raw/master/ws-heartbeat
 chmod +x ws-heartbeat
@@ -21,7 +21,7 @@ mv ws-run /usr/bin
 wget https://github.com/Wildlife-Systems/ws-node/raw/master/ws-indicate
 chmod +x ws-indicate
 chown root:root ws-indicate
-mv ws-indicate /usr/bin
+mv ws-indicate /usr/bin4
 
 wget https://github.com/Wildlife-Systems/ws-node/raw/master/ws-network
 chmod +x ws-network
@@ -39,6 +39,9 @@ if [[ "$OS_REPORTED" == "Debian GNU/Linux" ]]; then
 else
         if [[ "$OS_REPORTED" == "Ubuntu" ]]; then
                 OS="Ubuntu"
+                wget https://github.com/Wildlife-Systems/ws-node/raw/master/os/ubuntu/etc/ws
+                chown root:root ws
+                mv ws-indicate /etc/sudoers.d
         fi
 fi
 CONF=$(jq --arg os $OS '.+{os:$os}' .ws.conf)

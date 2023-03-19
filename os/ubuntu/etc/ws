@@ -1,0 +1,3 @@
+#
+# Allows WildlifeSystems scripts to run as root without a password
+%sudo   ALL=(root)      NOPASSWD: /usr/bin/ws-indicate
