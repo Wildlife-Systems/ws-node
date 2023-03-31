@@ -47,6 +47,19 @@ fi
 CONF=$(jq --arg os $OS '.+{os:$os}' .ws.conf)
 echo "$CONF" > .ws.conf
 
+if [[ "$OS" == "Ubuntu" ]]; then
+  apt-get install lua5.1 alsa-utils triggerhappy iw crda
+  wget https://archive.raspberrypi.org/debian/pool/main/r/raspi-config/raspi-config_20230214_all.deb
+  dpkg -i raspi-config_20230214_all.deb
+  rm raspi-config_20230214_all.deb
+fi
+
+lua5.1 but it is not installed
+                Depends: alsa-utils but it is not installed
+                Recommends: triggerhappy but it is not installed
+                Recommends: iw but it is not installed
+                Recommends: crda but it is not installable
+
 #Install the abstraction layers
 wget -O - https://raw.githubusercontent.com/Wildlife-Systems/sensor-control/main/install | sudo bash
 wget -O - https://github.com/wildlife-systems/sound-device-control/raw/master/install | sudo bash
