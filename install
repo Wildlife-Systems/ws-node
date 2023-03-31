@@ -54,12 +54,6 @@ if [[ "$OS" == "Ubuntu" ]]; then
   rm raspi-config_20230214_all.deb
 fi
 
-lua5.1 but it is not installed
-                Depends: alsa-utils but it is not installed
-                Recommends: triggerhappy but it is not installed
-                Recommends: iw but it is not installed
-                Recommends: crda but it is not installable
-
 #Install the abstraction layers
 wget -O - https://raw.githubusercontent.com/Wildlife-Systems/sensor-control/main/install | sudo bash
 wget -O - https://github.com/wildlife-systems/sound-device-control/raw/master/install | sudo bash
