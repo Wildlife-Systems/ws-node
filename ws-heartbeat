@@ -1,16 +1,22 @@
 #!/bin/bash
 
-#TOKEN=$(<.ws-token)
-SERIAL=$(grep Serial /proc/cpuinfo | cut -d ' ' -f 2)
+$WSTOKEN_PATH="~/.ws-token"
+if [[ -f $WSTOKEN_PATH ]]; then
+  WS_TOKEN=$(<~/.ws-token)
+else
+  WS_TOKEN=""
+fi
+
+NODE_ID=$(grep Serial /proc/cpuinfo | cut -d ' ' -f 2)
 
 TEMPRAW=$(cat /sys/class/thermal/thermal_zone0/temp)
 TEMPC=$(($TEMPRAW /1000))
-
 IPS=$(hostname -I)
-
 MODEL=$(tr -d '\0' </proc/device-tree/model)
 
-#STATUS=$(curl -s --data "token=$TOKEN&serial=$SERIAL&model=$MODEL&status=$1&temp=$TEMPC&ips=$IPS" https://devices.wildlife.systems/heartbeat/index.php)
+if [[ -n $WS_TOKEN ]]; then
+  STATUS=$(curl -s --data "token=$TOKEN&node_id=$SERIAL&model=$MODEL&status=$1&temp=$TEMPC&ips=$IPS" https://devices.wildlife.systems/heartbeat/index.php)
+fi
 #ToDo: Allow custom script
 
 REBOOT=$(jq -r '."reboot"'<<< "$STATUS")
