@@ -1,7 +1,8 @@
 #!/bin/bash
 
-$WSTOKEN_PATH="~/.ws-token"
+WSTOKEN_PATH="~/.ws-token"
 if [[ -f $WSTOKEN_PATH ]]; then
+  echo "Token found."
   WS_TOKEN=$(<~/.ws-token)
   STATUS=$(curl -s --data "token=$TOKEN&node_id=$SERIAL&model=$MODEL&status=$1&temp=$TEMPC&ips=$IPS" https://devices.wildlife.systems/heartbeat/index.php)
 fi
