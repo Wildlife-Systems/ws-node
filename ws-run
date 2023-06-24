@@ -1,8 +1,9 @@
 #!/bin/bash
 
+#Check if already running
 I=`ps -A | grep ws-run | wc -l`
 if [[ $I -gt 2 ]]; then
-	exit 0
+	exit 1
 fi
 
 #Config
