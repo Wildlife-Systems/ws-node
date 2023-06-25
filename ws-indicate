@@ -1,6 +1,16 @@
 #!/bin/bash
 
-# Exit codes
+# WildlifeSystems
+#
+# This script is part of the WildlifeSystems project. For further information
+# please refer to https://docs.wildlife.systems, or for more information on
+# the project itself, please refer to https://wildlife.systems.
+
+# Return codes
+#
+# Further information on WildlifeSystems standard reurn codes can be found
+# at https://docs.wildlife.systems/return-codes.html
+# 0 - Success
 # 10 - invalid argument
 
 

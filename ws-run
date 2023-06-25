@@ -1,6 +1,10 @@
 #!/bin/bash
 
-# Exit codes
+# Return codes
+#
+# Further information on WildlifeSystems standard reurn codes can be found
+# at https://docs.wildlife.systems/return-codes.html
+# 0 - Success
 # 1 - Already running
 # 11 - Incorrect filename pattern
 
