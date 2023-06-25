@@ -2,7 +2,7 @@
 
 # Exit codes
 # 1 - Already running
-# 2 - Incorrect filename pattern
+# 21 - Incorrect filename pattern
 
 
 #Check if already running
@@ -41,7 +41,7 @@ do
 					;;
 			*)
 					echo "Incorrect filename pattern"
-					exit 2;
+					exit 21;
 					;;
 	esac
 
