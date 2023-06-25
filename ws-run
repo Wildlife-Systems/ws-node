@@ -1,8 +1,12 @@
 #!/bin/bash
 
+# Exit codes
+# 1 - Already running
+# 2 - Incorrect filename pattern
+
+
 #Check if already running
-I=`ps -A | grep ws-run | wc -l`
-if [[ $I -gt 2 ]]; then
+if [[ (ps ws-run | wc -l) -gt 2 ]]; then
 	exit 1
 fi
 
@@ -37,7 +41,7 @@ do
 					;;
 			*)
 					echo "Incorrect filename pattern"
-					exit 1;
+					exit 2;
 					;;
 	esac
 
