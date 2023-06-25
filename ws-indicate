@@ -1,22 +1,19 @@
 #!/bin/bash
 
-#Wait for previous indicators
-I=$((`ps -A | grep ws-indicate | wc -l`))
-while [[ $I -gt 2 ]];
-do
-	I="$((`ps -A | grep ws-indicate | wc -l`))";
+#Wait for previous indicators to complete
+while [[ $(ps ws-indicate | wc -l) -gt 2 ]]; do
+  sleep 0.1
 done
 
 #Initial state
 ATINIT=`awk -F'[][]' '{print $2}' /sys/class/leds/led0/trigger`
 ABINIT=`cat /sys/class/leds/led0/brightness`
 
-MODEL=$(cat /proc/cpuinfo | grep 'Revision' | awk '{print $3}' | sed 's/^ *//g' | sed 's/ *$//g')
+MODEL=$(grep -oP 'Revision\s*:\s*\K[^ ]*' /proc/cpuinfo)
 if [[ "$MODEL" != "000d" ]]; then
   PTINIT=`awk -F'[][]' '{print $2}' /sys/class/leds/led1/trigger`
   PBINIT=`cat /sys/class/leds/led1/brightness`
 fi
-
 
 #Indicators
 case "$1" in
@@ -29,9 +26,7 @@ case "$1" in
 		;;
 
 	heartbeat)
-		x=1
-		while [ $x -lt 2 ]
-		do
+		for in in {1..2}; do
 			pi-pwr on actled &
 			pi-pwr off pwrled &
 			sleep 0.1
@@ -44,17 +39,14 @@ case "$1" in
 
 	countdown)
 		pi-pwr off actled &
-		x=$(("$2"))
-                while [ 0 -le $x ]
-                do
-                        pi-pwr off pwrled &
-                        sleep 0.5
-                        pi-pwr on pwrled &
-                        sleep 0.5
-			echo $x
-                        x=$(( $x - 1 ))
-                done
-                ;;
+		for i in $(seq $2 -1 0); do
+			pi-pwr off pwrled &
+			sleep 0.5
+			pi-pwr on pwrled &
+			sleep 0.5
+			echo $i
+		done
+		;;
 
 	record)
 		pi-pwr off actled &
@@ -62,17 +54,15 @@ case "$1" in
 		$2
 		pi-pwr off pwrled &
 		;;
+
 	*)
 		exit 1
 esac
-
-
 
 #Restore initial state
 echo $ABINIT | sudo tee /sys/class/leds/led0/brightness >> /dev/null
 echo $ATINIT | sudo tee /sys/class/leds/led0/trigger >> /dev/null
 
-MODEL=$(cat /proc/cpuinfo | grep 'Revision' | awk '{print $3}' | sed 's/^ *//g' | sed 's/ *$//g')
 if [[ "$MODEL" != "000d" ]]; then
   echo $PBINIT | sudo tee /sys/class/leds/led1/brightness >> /dev/null
   echo $PTINIT | sudo tee /sys/class/leds/led1/trigger >> /dev/null
