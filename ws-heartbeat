@@ -10,12 +10,20 @@
 # please refer to https://docs.wildlife.systems, or for more information on
 # the project itself, please refer to https://wildlife.systems.
 
+# If status is not set, set it to empty.
+if [[ -z "$1" ]]; then
+  STATUS=""
+else
+  STATUS="$1"
+fi
+
+# If the token file exists, send the heartbeat to the server.
 WSTOKEN_PATH=~/.ws-token
 if [[ -f "$WSTOKEN_PATH" ]]; then
   TOKEN=$(<~/.ws-token)
   SERIAL=$(grep Serial /proc/cpuinfo | cut -d ' ' -f 2)
   HB=$(sr onboard)
-  STATUS="$(curl -s --data "token=$TOKEN&node_id=$SERIAL&heartbeat=$HB" https://devices.wildlife.systems/heartbeat/index.php)"
+  ACTION="$(curl -s --data "token=$TOKEN&node_id=$SERIAL&status=$STATUS&heartbeat=$HB" https://devices.wildlife.systems/heartbeat/index.php)"
 else
   echo "No token."
 fi
