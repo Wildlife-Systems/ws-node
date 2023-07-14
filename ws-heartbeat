@@ -1,6 +1,10 @@
 #!/bin/bash
 
-# WildlifeSystems
+# WildlifeSystems - Heartbeat
+
+# This script is used to send a heartbeat to the WildlifeSystems server with
+# the current status of the device. This is used to determine if the device is
+# online or offline and its operational condition.
 #
 # This script is part of the WildlifeSystems project. For further information
 # please refer to https://docs.wildlife.systems, or for more information on
