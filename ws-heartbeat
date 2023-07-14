@@ -6,26 +6,12 @@
 # please refer to https://docs.wildlife.systems, or for more information on
 # the project itself, please refer to https://wildlife.systems.
 
-WSTOKEN_PATH="~/.ws-token"
-if [[ -f $WSTOKEN_PATH ]]; then
-  echo "Token found."
-  WS_TOKEN=$(<~/.ws-token)
-  STATUS=$(curl -s --data "token=$TOKEN&node_id=$SERIAL&model=$MODEL&status=$1&temp=$TEMPC&ips=$IPS" https://devices.wildlife.systems/heartbeat/index.php)
-fi
-
-#ToDo: Allow custom script
-
-REBOOT=$(jq -r '."reboot"'<<< "$STATUS")
-if [[ "$REBOOT" == 1 ]]; then
-	sudo reboot
-fi
-
-RESETUP=$(jq -r '."resetup"'<<< "$STATUS")
-if [[ "$RESETUP" == 1 ]]; then
-	ws-setup unattended
-fi
-
-REINSTALL=$(jq -r '."reinstall"'<<< "$STATUS")
-if [[ "$REINSTALL" == 1 ]]; then
-	sudo bash -c "$(wget -O - https://github.com/Wildlife-Systems/ws-node/raw/master/install)"
+WSTOKEN_PATH=~/.ws-token
+if [[ -f "$WSTOKEN_PATH" ]]; then
+  TOKEN=$(<~/.ws-token)
+  SERIAL=$(grep Serial /proc/cpuinfo | cut -d ' ' -f 2)
+  HB=$(sr onboard)
+  STATUS="$(curl -s --data "token=$TOKEN&node_id=$SERIAL&heartbeat=$HB" https://devices.wildlife.systems/heartbeat/index.php)"
+else
+  echo "No token."
 fi
