@@ -11,11 +11,7 @@
 # the project itself, please refer to https://wildlife.systems.
 
 # If status is not set, set it to empty.
-if [[ -z "$1" ]]; then
-  STATUS=""
-else
-  STATUS="$1"
-fi
+STATUS="${1:-}"
 
 # If the token file exists, send the heartbeat to the server.
 WSTOKEN_PATH=~/.ws-token
@@ -27,4 +23,5 @@ if [[ -f "$WSTOKEN_PATH" ]]; then
   ACTION="$(curl -s --data "token=$TOKEN&node_id=$SERIAL&status=$STATUS&hostname=$HNAME&heartbeat=$HB" https://devices.wildlife.systems/heartbeat/index.php)"
 else
   echo "No token."
+  exit 2
 fi
