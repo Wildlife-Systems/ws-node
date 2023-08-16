@@ -20,7 +20,8 @@ if [[ -f "$WSTOKEN_PATH" ]]; then
   SERIAL=$(grep Serial /proc/cpuinfo | cut -d ' ' -f 2)
   HNAME=$(hostname)
   HB=$(sr onboard)
-  ACTION="$(curl -s --data "token=$TOKEN&node_id=$SERIAL&status=$STATUS&hostname=$HNAME&heartbeat=$HB" https://devices.wildlife.systems/heartbeat/index.php)"
+  MACADDR=$(</sys/class/net/eth0/address)
+  ACTION="$(curl -s --data "token=$TOKEN&node_id=$SERIAL&status=$STATUS&hostname=$HNAME&heartbeat=$HB&mac=$MACADDR" https://devices.wildlife.systems/heartbeat/index.php)"
 else
   echo "No token."
   exit 2
