@@ -1,3 +1,9 @@
+# WildlifeSystems
+#
+# This script is part of the WildlifeSystems project. For further information
+# please refer to https://docs.wildlife.systems, or for more information on
+# the project itself, please refer to https://wildlife.systems.
+
 #Update system
 apt-get update
 apt-get install -y ufw jq
@@ -46,6 +52,14 @@ else
 fi
 CONF=$(jq --arg os $OS '.+{os:$os}' .ws.conf)
 echo "$CONF" > .ws.conf
+
+if [[ "$OS" == "Ubuntu" ]]; then
+  #Install raspi-config
+  apt-get install lua5.1 alsa-utils triggerhappy iw crda
+  wget https://archive.raspberrypi.org/debian/pool/main/r/raspi-config/raspi-config_20230214_all.deb
+  dpkg -i raspi-config_20230214_all.deb
+  rm raspi-config_20230214_all.deb
+fi
 
 #Install the abstraction layers
 wget -O - https://raw.githubusercontent.com/Wildlife-Systems/sensor-control/main/install | sudo bash

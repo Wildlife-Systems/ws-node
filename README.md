@@ -12,5 +12,5 @@ If the node is not configured during install it can be configured by running `ws
 
 ## Development
 
-* Initial development of the node software was done as part of the Leverhulme Trust funded Automated Acoustic Observatories project at the University of York.
-* Additional development was undertaken as part of the Urban Nature Project at the Natural History Museum, London.
+- Initial development of the node software was done as part of the Leverhulme Trust funded [Automated Acoustic Observatories](https://ebaker.me.uk/aao) project at the [University of York](https://york.ac.uk).
+- Additional development was undertaken as part of the Urban Nature Project at the [Natural History Museum](https://www.nhm.ac.uk), London.

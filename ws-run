@@ -1,8 +1,23 @@
 #!/bin/bash
 
-I=`ps -A | grep ws-run | wc -l`
-if [[ $I -gt 2 ]]; then
-	exit 0
+# WildlifeSystems
+#
+# This script is part of the WildlifeSystems project. For further information
+# please refer to https://docs.wildlife.systems, or for more information on
+# the project itself, please refer to https://wildlife.systems.
+
+# Return codes
+#
+# Further information on WildlifeSystems standard reurn codes can be found
+# at https://docs.wildlife.systems/return-codes.html
+# 0 - Success
+# 1 - Already running
+# 11 - Incorrect filename pattern
+
+
+#Check if already running
+if [[ (ps ws-run | wc -l) -gt 2 ]]; then
+	exit 1
 fi
 
 #Config
@@ -16,7 +31,10 @@ function onOff {
 }
 
 if [[ "$1" != "cron" ]]; then
+  #Send heartbeat message
   ws-heartbeat countdown&
+
+  #Indicate countdown and heartbeat
   echo Preparing to run...
   ws-indicate countdown $COUNTDOWN
   ws-indicate heartbeat &
@@ -27,16 +45,15 @@ fi
 while true;
 do
 
-case $FNTYPE in
-        timestamp)
-                FN=$(date +%s)
-                ;;
-        *)
-                echo "Incorrect filename pattern"
-                exit 1;
-                ;;
-esac
-
+	case $FNTYPE in
+			timestamp)
+					FN=$(date +%s)
+					;;
+			*)
+					echo "Incorrect filename pattern"
+					exit 11;
+					;;
+	esac
 
 	N=$(echo "$CONFIG" | jq -r ".run | length")
 	I=0
@@ -91,8 +108,8 @@ esac
 		ws-indicate heartbeat
 	onOff
 	done
-#Exit after one iteration if called form cron
-if [[ "$1" == "cron" ]]; then
-	exit 0
-fi
+	#Exit after one iteration if called form cron
+	if [[ "$1" == "cron" ]]; then
+		exit 0
+	fi
 done

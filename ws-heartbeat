@@ -1,29 +1,28 @@
 #!/bin/bash
 
-#TOKEN=$(<.ws-token)
-SERIAL=$(cat /proc/cpuinfo | grep Serial | cut -d ' ' -f 2)
+# WildlifeSystems - Heartbeat
 
-TEMPRAW=$(cat /sys/class/thermal/thermal_zone0/temp)
-TEMPC=$(($TEMPRAW /1000))
+# This script is used to send a heartbeat to the WildlifeSystems server with
+# the current status of the device. This is used to determine if the device is
+# online or offline and its operational condition.
+#
+# This script is part of the WildlifeSystems project. For further information
+# please refer to https://docs.wildlife.systems, or for more information on
+# the project itself, please refer to https://wildlife.systems.
 
-IPS=$(hostname -I)
+# If status is not set, set it to empty.
+STATUS="${1:-}"
 
-MODEL=$(tr -d '\0' </proc/device-tree/model)
-
-#STATUS=$(curl -s --data "token=$TOKEN&serial=$SERIAL&model=$MODEL&status=$1&temp=$TEMPC&ips=$IPS" https://devices.wildlife.systems/heartbeat/index.php)
-#ToDo: Allow custom script
-
-REBOOT=$(jq -r '."reboot"'<<< "$STATUS")
-if [[ "$REBOOT" == 1 ]]; then
-	sudo reboot
-fi
-
-RESETUP=$(jq -r '."resetup"'<<< "$STATUS")
-if [[ "$RESETUP" == 1 ]]; then
-	ws-setup unattended
-fi
-
-REINSTALL=$(jq -r '."reinstall"'<<< "$STATUS")
-if [[ "$REINSTALL" == 1 ]]; then
-	sudo bash -c "$(wget -O - https://github.com/Wildlife-Systems/ws-node/raw/master/install)"
+# If the token file exists, send the heartbeat to the server.
+WSTOKEN_PATH=~/.ws-token
+if [[ -f "$WSTOKEN_PATH" ]]; then
+  TOKEN=$(<~/.ws-token)
+  SERIAL=$(grep Serial /proc/cpuinfo | cut -d ' ' -f 2)
+  HNAME=$(hostname)
+  HB=$(sr onboard)
+  MACADDR=$(</sys/class/net/eth0/address)
+  ACTION="$(curl -s --data "token=$TOKEN&node_id=$SERIAL&status=$STATUS&hostname=$HNAME&heartbeat=$HB&mac=$MACADDR" https://devices.wildlife.systems/heartbeat/index.php)"
+else
+  echo "No token."
+  exit 2
 fi
