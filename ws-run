@@ -16,8 +16,8 @@
 
 
 #Check if already running
-if [[ (ps ws-run | wc -l) -gt 2 ]]; then
-	exit 1
+if pgrep -x ws-run > /dev/null; then
+    exit 1
 fi
 
 #Config
