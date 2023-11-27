@@ -53,7 +53,7 @@ fi
 CONF=$(jq --arg os $OS '.+{os:$os}' .ws.conf)
 echo "$CONF" > .ws.conf
 
-if [[ "$OS" == "Ubuntu" ]]; then
+if [[ "$OS_REPORTED" == "Ubuntu" ]]; then
   #Install raspi-config
   apt-get install lua5.1 alsa-utils triggerhappy iw crda
   wget https://archive.raspberrypi.org/debian/pool/main/r/raspi-config/raspi-config_20230214_all.deb
