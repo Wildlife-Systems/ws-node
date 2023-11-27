@@ -59,6 +59,9 @@ if [[ "$OS_REPORTED" == "Ubuntu" ]]; then
   wget https://archive.raspberrypi.org/debian/pool/main/r/raspi-config/raspi-config_20230214_all.deb
   dpkg -i raspi-config_20230214_all.deb
   rm raspi-config_20230214_all.deb
+
+  #Need to install whois package to get mkpasswd
+  apt-get install whois
 fi
 
 #Install the abstraction layers
