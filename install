@@ -50,7 +50,7 @@ else
                 mv ws /etc/sudoers.d
         fi
 fi
-CONF=$(jq --arg os $OS '.+{os:$os}' .ws.conf)
+CONF=$(jq --arg os $OS_REPORTED '.+{os:$os}' .ws.conf)
 echo "$CONF" > .ws.conf
 
 if [[ "$OS_REPORTED" == "Ubuntu" ]]; then
