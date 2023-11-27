@@ -15,8 +15,8 @@
 # 11 - Incorrect filename pattern
 
 
-#Check if already running
-if pgrep -x ws-run > /dev/null; then
+#Check if this script already running
+if [[ "$(pgrep -c ws-run)" -gt 1 ]]; then
     exit 1
 fi
 
