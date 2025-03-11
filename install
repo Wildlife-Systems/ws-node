@@ -27,7 +27,7 @@ mv ws-run /usr/bin
 wget https://github.com/Wildlife-Systems/ws-node/raw/master/ws-indicate
 chmod +x ws-indicate
 chown root:root ws-indicate
-mv ws-indicate /usr/bin4
+mv ws-indicate /usr/bin
 
 wget https://github.com/Wildlife-Systems/ws-node/raw/master/ws-network
 chmod +x ws-network
