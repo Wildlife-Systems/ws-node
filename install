@@ -55,10 +55,7 @@ echo "$CONF" > .ws.conf
 
 if [[ "$OS_REPORTED" == "Ubuntu" ]]; then
   #Install raspi-config
-  apt-get install lua5.1 alsa-utils triggerhappy iw crda
-  wget https://archive.raspberrypi.org/debian/pool/main/r/raspi-config/raspi-config_20230214_all.deb
-  dpkg -i raspi-config_20230214_all.deb
-  rm raspi-config_20230214_all.deb
+  apt-get install raspi-config -y
 
   #Need to install whois package to get mkpasswd
   apt-get install whois
