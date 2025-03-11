@@ -21,7 +21,7 @@ if [[ "$(pgrep -c ws-run)" -gt 1 ]]; then
 fi
 
 #Config
-CONFIG=$(cat /home/pi/.ws.conf)
+CONFIG=$(cat ~/.ws.conf)
 COUNTDOWN=5
 FNTYPE=$(echo "$CONFIG" | jq -r '.init .filenaming')
 
