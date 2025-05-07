@@ -47,6 +47,7 @@ else
                 OS="Ubuntu"
                 wget https://github.com/Wildlife-Systems/ws-node/raw/master/os/ubuntu/etc/ws
                 chown root:root ws
+                chmod 440 ws
                 mv ws /etc/sudoers.d
         fi
 fi

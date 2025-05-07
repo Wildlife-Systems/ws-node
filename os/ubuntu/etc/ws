@@ -1,5 +1,4 @@
-#
 # Allows WildlifeSystems scripts to run as root without a password
-%sudo   ALL=(root)      NOPASSWD: /usr/bin/ws-indicate
-%sudo   ALL=(root)      NOPASSWD: /usr/bin/pi-pwr
-%sudo   ALL=(root)      NOPASSWD: /usr/bin/sr
+%sudo ALL=(ALL) NOPASSWD: /usr/bin/ws-indicate
+%sudo ALL=(ALL) NOPASSWD: /usr/bin/pi-pwr
+%sudo ALL=(ALL) NOPASSWD: /usr/bin/sr
