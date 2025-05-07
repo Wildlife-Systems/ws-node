@@ -65,6 +65,8 @@ if [[ -f "/etc/ws/audio.conf" ]]; then
   read OVERWRITE
   if [[ "$OVERWRITE" == "y" ]]; then
     mv audio.conf /etc/ws/audio.conf
+  else
+    rm audio.conf
   fi
 else
   mv audio.conf /etc/ws/audio.conf
