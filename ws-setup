@@ -16,7 +16,7 @@ if [[ -f /boot/.s3cfg ]] || [[ -f /home/pi/.s3cfg ]]; then
 fi
 
 #Set defaults
-DEVNAME="raspberrypi"
+DEVNAME=$(hostnamectl hostname)
 SNDDEV="manual"
 IMGDEV="manual"
 PASSWD="manual"
@@ -71,9 +71,6 @@ else
 fi
 
 #Setup hostname
-if [[ "$DEVNAME" == "raspberrypi" ]]; then
-  DEVNAME="raspberrypi"
-fi
 sudo hostnamectl set-hostname $DEVNAME
 
 #Setup sound device
