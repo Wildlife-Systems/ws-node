@@ -17,7 +17,8 @@
 
 #Check if this script already running
 if [[ "$(pgrep -c ws-run-audio)" -gt 1 ]]; then
-    exit 1
+  echo "ws-run-audio already running. Exiting."
+  exit 1
 fi
 
 echo "Starting ws-run-audio..."
@@ -60,7 +61,7 @@ do
   		pi-pwr on $(echo "$CONFIG" | jq -r ".run[$I] .on[]" | tr '\n' ' ')
 		ACTION=`echo $CONFIG| jq -r ".run[$I] .action"`
 		echo $ACTION
-		ws-heartbeat $ACTION &
+		sudo ws-heartbeat $ACTION &
         	case  $ACTION in
 			record)
 				DURATION=`echo $CONFIG| jq -r ".run[$I] .duration"`
