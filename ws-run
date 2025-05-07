@@ -20,6 +20,9 @@ if [[ "$(pgrep -c ws-run)" -gt 1 ]]; then
     exit 1
 fi
 
+echo "Starting ws-run..."
+exit 0	
+
 #Config
 CONFIG=$(cat ~/.ws.conf)
 COUNTDOWN=5
