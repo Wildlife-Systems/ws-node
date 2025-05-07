@@ -40,8 +40,6 @@ function onOff {
   pi-pwr on $(echo "$CONFIG" | jq -r '.init .on[]' | tr '\n' ' ')
 }
 
-HOSTNAME=$(hostnamectl hostname)
-
 while true;
 do
 
@@ -100,6 +98,15 @@ do
 						fi
 
 						mv $FN.$EXTENSION $MVUPPATH &
+						;;
+					script)
+						SCRIPT=`echo $CONFIG| jq -r ".run[$I] .script"`
+						# Check if the script exists and is executable
+						if [[ -x "$SCRIPT" ]]; then
+							$SCRIPT $FN $EXTENSION &
+						else
+							echo "Script $SCRIPT not found or not executable."
+						fi
 						;;
 				esac
 				;;
