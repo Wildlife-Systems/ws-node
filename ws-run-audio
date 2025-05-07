@@ -21,7 +21,6 @@ if [[ "$(pgrep -c ws-run-audio)" -gt 1 ]]; then
 fi
 
 echo "Starting ws-run-audio..."
-exit 0	
 
 #Config
 CONFIG=$(cat /etc/ws/ws.conf)
