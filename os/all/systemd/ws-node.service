@@ -5,9 +5,9 @@ After=network.target
 [Service]
 Type=simple
 User=root
-ExecStart=/usr/bin/ws-run
-StandardOutput=file:/var/log/ws-run.log
-StandardError=file:/var/log/ws-run-error.log
+ExecStart=/usr/bin/ws-run-audio
+StandardOutput=file:/var/log/ws-run-audio.log
+StandardError=file:/var/log/ws-run-audio-error.log
 Restart=on-failure
 
 [Install]

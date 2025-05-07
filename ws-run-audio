@@ -16,11 +16,11 @@
 
 
 #Check if this script already running
-if [[ "$(pgrep -c ws-run)" -gt 1 ]]; then
+if [[ "$(pgrep -c ws-run-audio)" -gt 1 ]]; then
     exit 1
 fi
 
-echo "Starting ws-run..."
+echo "Starting ws-run-audio..."
 exit 0	
 
 #Config

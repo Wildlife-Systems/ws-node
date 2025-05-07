@@ -19,10 +19,10 @@ chmod +x ws-setup
 chown root:root ws-setup
 mv ws-setup /usr/bin
 
-wget https://github.com/Wildlife-Systems/ws-node/raw/master/ws-run
-chmod +x ws-run
-chown root:root ws-run
-mv ws-run /usr/bin
+wget https://github.com/Wildlife-Systems/ws-node/raw/master/ws-run-audio
+chmod +x ws-run-audio
+chown root:root ws-run-audio
+mv ws-run-audio /usr/bin
 
 wget https://github.com/Wildlife-Systems/ws-node/raw/master/ws-indicate
 chmod +x ws-indicate
