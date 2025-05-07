@@ -91,10 +91,11 @@ if [[ "$IMGDEV" == "manual" ]]; then
 fi
 idc-inst $IMGDEV
 
-#Install runtime script
-grep 'ws-run' /etc/rc.local > /dev/null
-if [[ $? == 1 ]]; then
-  sudo sed -i -e '$i \\nrunuser -l  pi -c /usr/bin/ws-run > out.txt 2>&1 &\n' /etc/rc.local
+#Install runtime service
+SERVICE_FILE="/etc/systemd/system/ws-node.service"
+if [[ ! -f "$SERVICE_FILE" ]]; then
+  wget -O $SERVICE_FILE https://raw.githubusercontent.com/Wildlife-Systems/ws-node/refs/heads/master/os/all/systemd/ws-node.service
+  sudo chmod 644 $SERVICE_FILE
 fi
 
 if [[ "$1" == "unattended" ]]; then
