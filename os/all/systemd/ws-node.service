@@ -1,0 +1,14 @@
+[Unit]
+Description=WildlifeSystems Runtime Script
+After=network.target
+
+[Service]
+Type=simple
+User=root
+ExecStart=/usr/bin/ws-run
+StandardOutput=file:/var/log/ws-run.log
+StandardError=file:/var/log/ws-run-error.log
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
