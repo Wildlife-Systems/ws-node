@@ -33,18 +33,6 @@ function onOff {
   pi-pwr on $(echo "$CONFIG" | jq -r '.init .on[]' | tr '\n' ' ')
 }
 
-if [[ "$1" != "cron" ]]; then
-  #Send heartbeat message
-  ws-heartbeat countdown&
-
-  #Indicate countdown and heartbeat
-  echo Preparing to run...
-  ws-indicate countdown $COUNTDOWN
-  ws-indicate heartbeat &
-fi
-
-
-
 while true;
 do
 
@@ -111,8 +99,4 @@ do
 		ws-indicate heartbeat
 	onOff
 	done
-	#Exit after one iteration if called form cron
-	if [[ "$1" == "cron" ]]; then
-		exit 0
-	fi
 done
