@@ -54,6 +54,13 @@ fi
 CONF=$(jq --arg os $OS '.+{os:$os}' .ws.conf)
 echo "$CONF" > .ws.conf
 
+# CHeck if /etc/ws exists and create it if not
+if [[ ! -d "/etc/ws" ]]; then
+  mkdir /etc/ws
+fi
+
+mv .ws.conf /etc/ws/ws.conf
+
 if [[ "$OS_REPORTED" == "Ubuntu" ]]; then
   #Install raspi-config
   apt-get install raspi-config -y

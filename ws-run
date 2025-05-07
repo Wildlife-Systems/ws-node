@@ -24,7 +24,7 @@ echo "Starting ws-run..."
 exit 0	
 
 #Config
-CONFIG=$(cat ~/.ws.conf)
+CONFIG=$(cat /etc/ws/ws.conf)
 COUNTDOWN=5
 FNTYPE=$(echo "$CONFIG" | jq -r '.init .filenaming')
 

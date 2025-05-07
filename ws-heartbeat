@@ -14,7 +14,7 @@
 STATUS="${1:-}"
 
 # If the token file exists, send the heartbeat to the server.
-WSTOKEN_PATH=~/.ws-token
+WSTOKEN_PATH=/etc/ws/ws-token
 if [[ -f "$WSTOKEN_PATH" ]]; then
   TOKEN=$(<"$WSTOKEN_PATH")
   SERIAL=$(grep Serial /proc/cpuinfo | cut -d ' ' -f 2)
