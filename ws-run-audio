@@ -40,6 +40,8 @@ function onOff {
   pi-pwr on $(echo "$CONFIG" | jq -r '.init .on[]' | tr '\n' ' ')
 }
 
+HOSTNAME=$(hostnamectl hostname)
+
 while true;
 do
 
@@ -90,11 +92,20 @@ do
 						eval $S3UP
 						;;
 					mv)
-					    # CHeck if the destination directory exists
-						if [[ ! -d "$UPPATH" ]]; then
-							mkdir -p $UPPATH
-						fi
-						MVUP=`eval echo "mv $FN.$EXTENSION $UPPATH"`
+						mv)
+							MVUPPATH=$(eval "echo ${UPPATH}")
+							
+							# Check if the destination directory exists
+							if [[ ! -d "$MVUPPATH" ]]; then
+									mkdir -p "$MVUPPATH"
+							fi
+
+							MVUP=$(eval echo "mv $FN.$EXTENSION $MVUPPATH")
+							if [[ "$ASYNC" == "true" ]]; then
+								MVUP="( $MVUP )&";
+							fi
+
+						MVUP=$(eval echo "mv h$FN.$EXTENSION $UPPATH")
 						if [[ "$ASYNC" == "true" ]]; then
 						  MVUP="( $MVUP )&";
 						fi
