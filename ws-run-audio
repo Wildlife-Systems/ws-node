@@ -90,6 +90,10 @@ do
 						eval $S3UP
 						;;
 					mv)
+					    # CHeck if the destination directory exists
+						if [[ ! -d "$UPPATH" ]]; then
+							mkdir -p $UPPATH
+						fi
 						MVUP=`eval echo "mv $FN.$EXTENSION $UPPATH"`
 						if [[ "$ASYNC" == "true" ]]; then
 						  MVUP="( $MVUP )&";
