@@ -54,12 +54,22 @@ fi
 CONF=$(jq --arg os $OS '.+{os:$os}' .ws.conf)
 echo "$CONF" > .ws.conf
 
-# CHeck if /etc/ws exists and create it if not
+# Check if /etc/ws exists and create it if not
 if [[ ! -d "/etc/ws" ]]; then
   mkdir /etc/ws
 fi
 
-mv .ws.conf /etc/ws/ws.conf
+# Ask whether to override /etc/ws/ws.conf if it exists
+if [[ -f "/etc/ws/ws.conf" ]]; then
+  echo "File /etc/ws/ws.conf already exists. Do you want to override it? (y/n)"
+  read OVERWRITE
+  if [[ "$OVERWRITE" == "y" ]]; then
+    mv .ws.conf /etc/ws/ws.conf
+  fi
+else
+  mv .ws.conf /etc/ws/ws.conf
+fi
+
 
 if [[ "$OS_REPORTED" == "Ubuntu" ]]; then
   #Install raspi-config
