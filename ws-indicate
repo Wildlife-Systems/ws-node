@@ -13,19 +13,28 @@
 # 0 - Success
 # 10 - invalid argument
 
+if [[ -z "$1" ]]; then
+  echo "Error: No argument provided."
+  exit 10
+fi
 
-while [[ $(pgrep -f ws-indicate | wc -l) -gt 2 ]]; do
+# If this script is already running, then wait for exising to finish
+while [[ $(pgrep -f ws-indicate | grep -v $$ | wc -l) -gt 1 ]]; do
+  # If there are lots of indictions queued, then exit
+  if [[ $(pgrep -f ws-indicate | grep -v $$ | wc -l) -gt 10 ]]; then
+    exit 1
+  fi
   sleep 0.1
 done
 
 #Initial state
-ATINIT=`awk -F'[][]' '{print $2}' /sys/class/leds/led0/trigger`
-ABINIT=`cat /sys/class/leds/led0/brightness`
+ATINIT=$(awk -F'[][]' '{print $2}' /sys/class/leds/led0/trigger)
+ABINIT=$(cat /sys/class/leds/led0/brightness)
 
 MODEL=$(grep -oP 'Revision\s*:\s*\K[^ ]*' /proc/cpuinfo)
 if [[ "$MODEL" != "000d" ]]; then
-  PTINIT=`awk -F'[][]' '{print $2}' /sys/class/leds/led1/trigger`
-  PBINIT=`cat /sys/class/leds/led1/brightness`
+  PTINIT=$(awk -F'[][]' '{print $2}' /sys/class/leds/led1/trigger)
+  PBINIT=$(cat /sys/class/leds/led1/brightness)
 fi
 
 #Indicators
@@ -39,25 +48,28 @@ case "$1" in
 		;;
 
 	heartbeat)
-		for in in {1..2}; do
+		for _ in {1..2}; do
 			pi-pwr on actled &
 			pi-pwr off pwrled &
 			sleep 0.1
 			pi-pwr on pwrled &
-			pi-pwr off actled
+			pi-pwr off actled &
 			sleep 0.1
-			x=$(( $x + 1 ))
 		done
 		;;
 
 	countdown)
+		if [[ -z "$2" || ! "$2" =~ ^[0-9]+$ ]]; then
+			echo "Error: Countdown requires a numeric argument."
+			exit 10
+		fi
 		pi-pwr off actled &
-		for i in $(seq $2 -1 0); do
+		for i in $(seq "$2" -1 0); do
 			pi-pwr off pwrled &
 			sleep 0.5
 			pi-pwr on pwrled &
 			sleep 0.5
-			echo $i
+			echo "$i"
 		done
 		;;
 
