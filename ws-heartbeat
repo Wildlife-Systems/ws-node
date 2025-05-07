@@ -16,12 +16,14 @@ STATUS="${1:-}"
 # If the token file exists, send the heartbeat to the server.
 WSTOKEN_PATH=~/.ws-token
 if [[ -f "$WSTOKEN_PATH" ]]; then
-  TOKEN=$(<~/.ws-token)
+  TOKEN=$(<"$WSTOKEN_PATH")
   SERIAL=$(grep Serial /proc/cpuinfo | cut -d ' ' -f 2)
   HNAME=$(hostname)
   HB=$(sr onboard)
-  MACADDR=$(</sys/class/net/eth0/address)
-  ACTION="$(curl -s --data "token=$TOKEN&node_id=$SERIAL&status=$STATUS&hostname=$HNAME&heartbeat=$HB&mac=$MACADDR" https://devices.wildlife.systems/heartbeat/index.php)"
+  MACADDR=$(<"/sys/class/net/eth0/address")
+  ACTION=$(curl -s --data \
+    "token=$TOKEN&node_id=$SERIAL&status=$STATUS&hostname=$HNAME&heartbeat=$HB&mac=$MACADDR" \
+    https://devices.wildlife.systems/heartbeat/index.php)
 else
   echo "No token."
   exit 2
