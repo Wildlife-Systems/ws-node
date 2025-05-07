@@ -23,7 +23,14 @@ fi
 echo "Starting ws-run-audio..."
 
 #Config
-CONFIG=$(cat /etc/ws/ws.conf)
+CONFIG=$(cat /etc/ws/audio.conf)
+
+#Check config exists
+if [[ -z "$CONFIG" ]]; then
+  echo "No config file found."
+  exit 2
+fi
+
 COUNTDOWN=5
 FNTYPE=$(echo "$CONFIG" | jq -r '.init .filenaming')
 
