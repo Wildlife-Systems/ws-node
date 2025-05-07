@@ -34,7 +34,7 @@ chmod +x ws-network
 chown root:root ws-network
 mv ws-network /usr/bin
 
-wget https://raw.githubusercontent.com/Wildlife-Systems/ws-node/master/os/all/audio.conf
+wget https://raw.githubusercontent.com/Wildlife-Systems/ws-node/master/os/all/etc/audio.conf
 OS="UNKNOWN"
 OS_REPORTED=$(grep '^NAME=' /etc/os-release | cut -d '"' -f 2)
 if [[ "$OS_REPORTED" == "Debian GNU/Linux" ]]; then
