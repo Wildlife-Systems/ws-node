@@ -34,7 +34,7 @@ chmod +x ws-network
 chown root:root ws-network
 mv ws-network /usr/bin
 
-wget https://raw.githubusercontent.com/Wildlife-Systems/ws-node/master/.ws.conf
+wget https://raw.githubusercontent.com/Wildlife-Systems/ws-node/master/os/all/audio.conf
 OS="UNKNOWN"
 OS_REPORTED=$(grep '^NAME=' /etc/os-release | cut -d '"' -f 2)
 if [[ "$OS_REPORTED" == "Debian GNU/Linux" ]]; then
@@ -51,8 +51,8 @@ else
                 mv ws /etc/sudoers.d
         fi
 fi
-CONF=$(jq --arg os $OS '.+{os:$os}' .ws.conf)
-echo "$CONF" > .ws.conf
+#CONF=$(jq --arg os $OS '.+{os:$os}' audio.conf)
+#echo "$CONF" > audio.conf
 
 # Check if /etc/ws exists and create it if not
 if [[ ! -d "/etc/ws" ]]; then
@@ -60,14 +60,14 @@ if [[ ! -d "/etc/ws" ]]; then
 fi
 
 # Ask whether to override /etc/ws/ws.conf if it exists
-if [[ -f "/etc/ws/ws.conf" ]]; then
-  echo "File /etc/ws/ws.conf already exists. Do you want to override it? (y/n)"
+if [[ -f "/etc/ws/audio.conf" ]]; then
+  echo "File /etc/ws/audio.conf already exists. Do you want to override it? (y/n)"
   read OVERWRITE
   if [[ "$OVERWRITE" == "y" ]]; then
-    mv .ws.conf /etc/ws/ws.conf
+    mv audio.conf /etc/ws/audio.conf
   fi
 else
-  mv .ws.conf /etc/ws/ws.conf
+  mv audio.conf /etc/ws/audio.conf
 fi
 
 
