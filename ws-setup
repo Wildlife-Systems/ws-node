@@ -91,10 +91,10 @@ if [[ "$IMGDEV" == "manual" ]]; then
 fi
 idc-inst $IMGDEV
 
-#Install runtime service
-SERVICE_FILE="/etc/systemd/system/ws-node.service"
+#Install ws-audio service
+SERVICE_FILE="/etc/systemd/system/ws-audio.service"
 if [[ ! -f "$SERVICE_FILE" ]]; then
-  wget -O $SERVICE_FILE https://raw.githubusercontent.com/Wildlife-Systems/ws-node/refs/heads/master/os/all/systemd/ws-node.service
+  wget -O $SERVICE_FILE https://raw.githubusercontent.com/Wildlife-Systems/ws-node/refs/heads/master/os/all/systemd/ws-audio.service
   sudo chmod 644 $SERVICE_FILE
 fi
 
