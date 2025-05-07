@@ -99,16 +99,7 @@ do
 								mkdir -p "$MVUPPATH"
 						fi
 
-						MVUP=$(eval echo "mv $FN.$EXTENSION $MVUPPATH")
-						if [[ "$ASYNC" == "true" ]]; then
-							MVUP="( $MVUP )&";
-						fi
-
-						MVUP=$(eval echo "mv h$FN.$EXTENSION $UPPATH")
-						if [[ "$ASYNC" == "true" ]]; then
-						  MVUP="( $MVUP )&";
-						fi
-						eval $MVUP
+						mv $FN.$EXTENSION $MVUPPATH &
 						;;
 				esac
 				;;
