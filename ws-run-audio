@@ -92,18 +92,17 @@ do
 						eval $S3UP
 						;;
 					mv)
-						mv)
-							MVUPPATH=$(eval "echo ${UPPATH}")
-							
-							# Check if the destination directory exists
-							if [[ ! -d "$MVUPPATH" ]]; then
-									mkdir -p "$MVUPPATH"
-							fi
+						MVUPPATH=$(eval "echo ${UPPATH}")
+						
+						# Check if the destination directory exists
+						if [[ ! -d "$MVUPPATH" ]]; then
+								mkdir -p "$MVUPPATH"
+						fi
 
-							MVUP=$(eval echo "mv $FN.$EXTENSION $MVUPPATH")
-							if [[ "$ASYNC" == "true" ]]; then
-								MVUP="( $MVUP )&";
-							fi
+						MVUP=$(eval echo "mv $FN.$EXTENSION $MVUPPATH")
+						if [[ "$ASYNC" == "true" ]]; then
+							MVUP="( $MVUP )&";
+						fi
 
 						MVUP=$(eval echo "mv h$FN.$EXTENSION $UPPATH")
 						if [[ "$ASYNC" == "true" ]]; then
