@@ -1,10 +1,9 @@
 Package: ws-node
 Version: 1.0.0
-Section: utils
-Priority: optional
-Architecture: all
+Architecture: arm64
 Maintainer: Ed Baker <ed@ebaker.me.uk>
+Installed-Size: 33
+Section: utils
+Priority: utils
 Description: WildlifeSystems Audio Runner
  This package installs the ws-node software, which is used to manage audio, image, and sensor recording and uploads for WildlifeSystems.
-
-

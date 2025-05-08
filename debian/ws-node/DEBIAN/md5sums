@@ -1,0 +1,6 @@
+afd8ec84bf4b5982201fb9d25c738b7e  usr/bin/ws-heartbeat
+43c414ff776ea9d08c111faf0745c065  usr/bin/ws-indicate
+a969695a6cb0c4edf3a860fe2bd88897  usr/bin/ws-network
+ecee260231b8fb28b97f68921c097931  usr/bin/ws-run-audio
+f855ce85edf20a5229de9260436e91bb  usr/bin/ws-setup
+2da01ee12b1a5c4a22ee186b549178d9  usr/share/doc/ws-node/changelog.gz
