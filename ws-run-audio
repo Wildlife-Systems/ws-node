@@ -73,58 +73,73 @@ do
 		sudo ws-heartbeat $ACTION &
         	case  $ACTION in
 				record)
-					DURATION=`echo $CONFIG| jq -r ".run[$I] .duration"`
-					CHANNELS=`echo $CONFIG| jq -r ".run[$I] .channels"`
-					BITRATE=`echo $CONFIG| jq -r ".run[$I] .bitrate"`
-					FORMAT=`echo $CONFIG| jq -r ".run[$I] .format"`
+					DURATION=$(echo "$CONFIG" | jq -r ".run[$I] .duration")
+					CHANNELS=$(echo "$CONFIG" | jq -r ".run[$I] .channels")
+					BITRATE=$(echo "$CONFIG" | jq -r ".run[$I] .bitrate")
+					FORMAT=$(echo "$CONFIG" | jq -r ".run[$I] .format")
 					ws-indicate record "arecord -c $CHANNELS -r $BITRATE -f $FORMAT -d $DURATION $FN.wav"
 					LATEST_RECORD=$FN
 					;;
 				sleep)
-					sleep `echo $CONFIG| jq -r ".run[$I] .duration"`
+					DURATION=$(echo "$CONFIG" | jq -r ".run[$I] .duration")
+					sleep "$DURATION"
 					;;
-				upload-delete)
-					if [[ "$LATEST_RECORD" == "" ]]; then
-						echo "Trying to upload before recording made." 1>&2
-						echo "Skipping upload." 1>&2
-						break
-					fi
-					;;
-				mv)
-					if [[ "$LATEST_RECORD" == "" ]]; then
-						echo "Trying to mv before recording made." 1>&2
-						echo "Skipping mv." 1>&2
-						break
-					fi
+				 upload-delete)
+					METHOD=`echo $CONFIG| jq -r ".run[$I] .method"`
+					UPPATH=`echo $CONFIG| jq -r ".run[$I] .path"`
+					EXTENSION=`echo $CONFIG| jq -r ".run[$I] .extension"`
+					ASYNC=`echo $CONFIG| jq -r ".run[$I] .async"`
+					case $METHOD in
+						s3cmd)
+							S3UP=`eval echo "s3cmd put $FN.$EXTENSION s3://$UPPATH"`
+							S3UP="$S3UP && rm $FN.$EXTENSION"
+							if [[ "$ASYNC" == "true" ]]; then
+								S3UP="( $S3UP )&";
+							fi
+							eval $S3UP
+							;;
+						mv)
+							MVUPPATH=$(eval "echo ${UPPATH}")
 
-					MVUPPATH=$(eval "echo ${UPPATH}")
-					
-					# Check if the destination directory exists
-					if [[ ! -d "$MVUPPATH" ]]; then
-							mkdir -p "$MVUPPATH"
-					fi
+							# Check if the destination directory exists
+							if [[ ! -d "$MVUPPATH" ]]; then
+											mkdir -p "$MVUPPATH"
+							fi
 
-					mv $FN.$EXTENSION $MVUPPATH &
-					;;
-				script)
-				if [[ "$LATEST_RECORD" == "" ]]; then
-						echo "Trying to pass file to script before recording made." 1>&2
-						echo "Skipping." 1>&2
-						break
-					fi
-					SCRIPT=`echo $CONFIG| jq -r ".run[$I] .script"`
-					# Check if the script exists and is executable
-					if [[ -x "$SCRIPT" ]]; then
-						$SCRIPT $FN $EXTENSION &
-					else
-						echo "Script $SCRIPT not found or not executable."
-					fi
-					;;
-			esac
+							mv $FN.$EXTENSION $MVUPPATH &
+							;;
+						script)
+							SCRIPT=`echo $CONFIG| jq -r ".run[$I] .script"`
+							# Check if the script exists and is executable
+							if [[ -x "$SCRIPT" ]]; then
+									$SCRIPT $FN $EXTENSION &
+							else
+									echo "Script $SCRIPT not found or not executable."
+							fi
+							;;
+					esac
 					;;
 				clearup)
+					METHOD=`echo $CONFIG| jq -r ".run[$I] .method"`
+					case $METHOD in
+						script)
+							SCRIPT=`echo $CONFIG| jq -r ".run[$I] .script"`
+							# Check if the script exists and is executable
+							if [[ -x "$SCRIPT" ]]; then
+									$SCRIPT &
+							else
+									echo "Script $SCRIPT not found or not executable."
+							fi
+							;;
+						*)
+							echo "Unknown method: $METHOD" 1>&2
+							;;
+					esac
 					;;
-		esac
+				*)
+					echo "Unknown action: $ACTION" 1>&2
+					;;
+			esac
 
 		I=$(($I + 1))
 		ws-indicate heartbeat
