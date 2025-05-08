@@ -1,0 +1,8 @@
+./usr/bin/ws-heartbeat
+./usr/bin/ws-indicate
+./usr/bin/ws-network
+./usr/bin/ws-run-audio
+./usr/bin/ws-setup
+./etc/ws/audio.conf
+./etc/sudoers.d/ws
+./etc/systemd/system/ws-audio.service

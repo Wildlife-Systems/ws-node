@@ -1,0 +1,15 @@
+Source: ws-node
+Section: utils
+Priority: optional
+Build-Depends: debhelper-compat (= 13)
+Maintainer: Ed Baker <ed@ebaker.me.uk>
+Description: WildlifeSystems Audio Runner
+ This package installs the ws-node software, which is used to manage audio, image, and sensor recording and uploads for WildlifeSystems.
+
+
+Package: ws-node
+Priority: utils 
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: WildlifeSystems Audio Runner
+ This package installs the ws-node software, which is used to manage audio, image, and sensor recording and uploads for WildlifeSystems.

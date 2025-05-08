@@ -1,0 +1,4 @@
+usr/bin/* usr/bin
+etc/ws/* etc/ws
+etc/sudoers.d/* etc/sudoers.d
+etc/systemd/system/* etc/systemd/system
