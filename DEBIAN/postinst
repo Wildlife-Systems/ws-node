@@ -1,0 +1,12 @@
+#!/bin/bash
+
+chmod +x /usr/bin/ws-indicate
+chmod +x /usr/bin/ws-heartbeat
+chmod +x /usr/bin/ws-run-audio
+chmod +x /usr/bin/ws-network
+chmod +x /usr/bin/ws-setup
+
+systemctl daemon-reload
+systemctl enable ws-run-audio.service
+
+exit 0

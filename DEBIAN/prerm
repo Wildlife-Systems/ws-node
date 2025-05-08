@@ -1,0 +1,8 @@
+#!/bin/bash
+set -e
+
+# Stop and disable the systemd service
+systemctl stop ws-run-audio.service || true
+systemctl disable ws-run-audio.service || true
+
+exit 0
