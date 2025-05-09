@@ -5,7 +5,8 @@ This software is used to setup a Raspberry Pi as an Wildlife Systems node.
 ## Installing the software
 
 ```
-sudo bash -c "$(wget -O - https://github.com/Wildlife-Systems/ws-node/raw/master/install)"
+wget https://github.com/Wildlife-Systems/ws-node/releases/download/1.0.0/ws-node_1.0.0_all.deb
+dpkg -i ws-node_1.0.0_all.deb
 ```
 
 The installation script will install the software required to configure a node, and ask the user if they wish to configure the node.
