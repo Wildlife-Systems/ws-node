@@ -28,13 +28,28 @@ while [[ $(pgrep -f ws-indicate | grep -v $$ | wc -l) -gt 1 ]]; do
 done
 
 #Initial state
-ATINIT=$(awk -F'[][]' '{print $2}' /sys/class/leds/led0/trigger)
-ABINIT=$(cat /sys/class/leds/led0/brightness)
+if [ -d /sys/class/leds/led0 ]; then
+	ATINIT=$(awk -F'[][]' '{print $2}' /sys/class/leds/led0/trigger)
+	ABINIT=$(cat /sys/class/leds/led0/brightness)
+else
+  if [ -d /sys/class/leds/ACT ]; then
+	ATINIT=$(awk -F'[][]' '{print $2}' /sys/class/leds/ACT/trigger)
+	ABINIT=$(cat /sys/class/leds/ACT/brightness)
+  fi
+fi
 
 MODEL=$(grep -oP 'Revision\s*:\s*\K[^ ]*' /proc/cpuinfo)
+
 if [[ "$MODEL" != "000d" ]]; then
-  PTINIT=$(awk -F'[][]' '{print $2}' /sys/class/leds/led1/trigger)
-  PBINIT=$(cat /sys/class/leds/led1/brightness)
+  if [ -d /sys/class/leds/led1 ]; then
+	PTINIT=$(awk -F'[][]' '{print $2}' /sys/class/leds/led1/trigger)
+	PBINIT=$(cat /sys/class/leds/led1/brightness)
+  else
+	if [ -d /sys/class/leds/PWR ]; then
+	  PTINIT=$(awk -F'[][]' '{print $2}' /sys/class/leds/PWR/trigger)
+	  PBINIT=$(cat /sys/class/leds/PWR/brightness)
+	fi
+  fi
 fi
 
 #Indicators
