@@ -1,6 +1,6 @@
 Package: ws-node
 Version: 1.0.0
-Architecture: arm64
+Architecture: all
 Maintainer: Ed Baker <ed@ebaker.me.uk>
 Installed-Size: 33
 Section: utils
