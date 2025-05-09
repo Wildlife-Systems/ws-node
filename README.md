@@ -18,9 +18,7 @@ wget https://github.com/Wildlife-Systems/ws-node/releases/download/1.0.0/ws-node
 sudo dpkg -i ws-node_1.0.0_all.deb
 ```
 
-The installation script will install the software required to configure a node, and ask the user if they wish to configure the node.
-
-If the node is not configured during install it can be configured by running `ws-setup` from the terminal.
+The node can then be configured by running `ws-setup` from the terminal.
 
 ## Development
 
