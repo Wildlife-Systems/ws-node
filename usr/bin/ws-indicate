@@ -120,4 +120,5 @@ if [[ "$MODEL" != "000d" ]]; then
 	  echo $PBINIT | sudo tee /sys/class/leds/PWR/brightness >> /dev/null
 	  echo $PTINIT | sudo tee /sys/class/leds/PWR/trigger >> /dev/null
 	fi
+  fi
 fi
