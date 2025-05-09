@@ -100,10 +100,24 @@ case "$1" in
 esac
 
 #Restore initial state
-echo $ABINIT | sudo tee /sys/class/leds/led0/brightness >> /dev/null
-echo $ATINIT | sudo tee /sys/class/leds/led0/trigger >> /dev/null
+if [ -d /sys/class/leds/led0 ]; then
+  echo $ABINIT | sudo tee /sys/class/leds/led0/brightness >> /dev/null
+  echo $ATINIT | sudo tee /sys/class/leds/led0/trigger >> /dev/null
+else
+  if [ -d /sys/class/leds/ACT ]; then
+	echo $ABINIT | sudo tee /sys/class/leds/ACT/brightness >> /dev/null
+	echo $ATINIT | sudo tee /sys/class/leds/ACT/trigger >> /dev/null
+  fi
+fi
+
 
 if [[ "$MODEL" != "000d" ]]; then
-  echo $PBINIT | sudo tee /sys/class/leds/led1/brightness >> /dev/null
-  echo $PTINIT | sudo tee /sys/class/leds/led1/trigger >> /dev/null
+  if [ -d /sys/class/leds/led1 ]; then
+	echo $PBINIT | sudo tee /sys/class/leds/led1/brightness >> /dev/null
+	echo $PTINIT | sudo tee /sys/class/leds/led1/trigger >> /dev/null
+  else
+	if [ -d /sys/class/leds/PWR ]; then
+	  echo $PBINIT | sudo tee /sys/class/leds/PWR/brightness >> /dev/null
+	  echo $PTINIT | sudo tee /sys/class/leds/PWR/trigger >> /dev/null
+	fi
 fi
