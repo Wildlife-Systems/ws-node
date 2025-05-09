@@ -4,6 +4,15 @@ This software is used to setup a Raspberry Pi as an Wildlife Systems node.
 
 ## Installing the software
 
+Install the dependencies.
+
+```
+wget https://github.com/Wildlife-Systems/pi-pwr/releases/download/1.0.0/pi-pwr_1.0.0_all.deb
+sudo dpkg -i pi-pwr_1.0.0_all.deb
+```
+
+Install ws-node.
+
 ```
 wget https://github.com/Wildlife-Systems/ws-node/releases/download/1.0.0/ws-node_1.0.0_all.deb
 sudo dpkg -i ws-node_1.0.0_all.deb
