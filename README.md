@@ -4,7 +4,7 @@ This software is used to setup a Raspberry Pi as an Wildlife Systems node.
 
 ## Installing the software
 
-[Add the WildlifeSytems APT repository to your systems](https://wildlife.systems/apt-configuration.html)
+[Add the WildlifeSytems APT repository to your system](https://wildlife.systems/apt-configuration.html)
 
 Install ws-node.
 
