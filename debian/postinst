@@ -10,5 +10,6 @@ chown root:root /etc/sudoers.d/ws
 
 systemctl daemon-reload
 systemctl enable ws-audio.service
+systemctl enable ws-sensors.service
 
 exit 0

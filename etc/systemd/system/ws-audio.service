@@ -1,5 +1,5 @@
 [Unit]
-Description=WildlifeSystems Runtime Script
+Description=WildlifeSystems Audio Runtime Script
 After=network.target
 
 [Service]

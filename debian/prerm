@@ -5,4 +5,7 @@ set -e
 systemctl stop ws-audio.service || true
 systemctl disable ws-audio.service || true
 
+systemctl stop ws-sensors.service || true
+systemctl disable ws-sensors.service || true
+
 exit 0
