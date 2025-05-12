@@ -60,7 +60,8 @@ do
 					;;
 	esac
 
-	LATEST_RECORD=""
+	# Create empty array to store filenames
+	FNARRAY=()
 
 	N=$(echo "$CONFIG" | jq -r ".run | length")
 	I=0
@@ -78,7 +79,9 @@ do
 					BITRATE=$(echo "$CONFIG" | jq -r ".run[$I] .bitrate")
 					FORMAT=$(echo "$CONFIG" | jq -r ".run[$I] .format")
 					ws-indicate record "arecord -c $CHANNELS -r $BITRATE -f $FORMAT -d $DURATION $FN.wav"
-					LATEST_RECORD=$FN
+					
+					# Add file to FNARRAY
+					FNARRAY+=("$FN.wav")
 					;;
 				sleep)
 					DURATION=$(echo "$CONFIG" | jq -r ".run[$I] .duration")
@@ -110,12 +113,21 @@ do
 							;;
 						script)
 							SCRIPT=`echo $CONFIG| jq -r ".run[$I] .script"`
-							# Check if the script exists and is executable
-							if [[ -x "$SCRIPT" ]]; then
-									$SCRIPT $FN $EXTENSION &
-							else
-									echo "Script $SCRIPT not found or not executable."
+							if [[ ! -x "$SCRIPT" ]]; then
+								echo "Script $SCRIPT not executable."
 							fi
+						    # Loop over the files in the array
+							for FILE in "${FNARRAY[@]}"; do
+								# Check if the file exists
+								if [[ -f "$FILE" ]]; then
+									#Call the script with the file as an argument
+									$SCRIPT "$FILE" &
+								else
+									echo "File $FILE not found."
+								fi
+								# Remove the file from the array
+								FNARRAY=("${FNARRAY[@]/$FILE}")
+							done
 							;;
 					esac
 					;;
