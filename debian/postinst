@@ -3,13 +3,12 @@
 chmod +x /usr/bin/ws-indicate
 chmod +x /usr/bin/ws-heartbeat
 chmod +x /usr/bin/ws-run-audio
+chmod +x /usr/bin/ws-run-sensors
 chmod +x /usr/bin/ws-network
 chmod +x /usr/bin/ws-setup
 
 chown root:root /etc/sudoers.d/ws
 
 systemctl daemon-reload
-systemctl enable ws-audio.service
-systemctl enable ws-sensors.service
 
 exit 0
