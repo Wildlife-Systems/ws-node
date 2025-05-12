@@ -1,3 +1,0 @@
-/etc/sudoers.d/ws
-/etc/systemd/system/ws-audio.service
-/etc/ws/audio.conf
