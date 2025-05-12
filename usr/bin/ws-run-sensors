@@ -71,8 +71,17 @@ do
 					METHOD=`echo $CONFIG| jq -r ".run[$I] .method"`
 					case $METHOD in
 						file)
-							FILE=`echo $CONFIG| jq -r ".run[$I] .file"`
-								echo "$SENSOR_DATA" >> $FILE
+							FILE=$(echo $CONFIG | jq -r ".run[$I] .file")
+							if [[ -z "$FILE" ]]; then
+							  echo "Error: File path is not defined in the configuration."
+							  continue
+							fi
+							if [[ -z "$SENSOR_DATA" ]]; then
+							  echo "Warning: No sensor data to write to $FILE."
+							  continue
+							fi
+							echo "Writing to file: $FILE"
+							echo "$SENSOR_DATA" >> $FILE
 							;;
 						script)
 							SCRIPT=`echo $CONFIG| jq -r ".run[$I] .script"`
