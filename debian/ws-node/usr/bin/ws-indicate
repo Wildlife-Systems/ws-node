@@ -28,13 +28,28 @@ while [[ $(pgrep -f ws-indicate | grep -v $$ | wc -l) -gt 1 ]]; do
 done
 
 #Initial state
-ATINIT=$(awk -F'[][]' '{print $2}' /sys/class/leds/led0/trigger)
-ABINIT=$(cat /sys/class/leds/led0/brightness)
+if [ -d /sys/class/leds/led0 ]; then
+	ATINIT=$(awk -F'[][]' '{print $2}' /sys/class/leds/led0/trigger)
+	ABINIT=$(cat /sys/class/leds/led0/brightness)
+else
+  if [ -d /sys/class/leds/ACT ]; then
+	ATINIT=$(awk -F'[][]' '{print $2}' /sys/class/leds/ACT/trigger)
+	ABINIT=$(cat /sys/class/leds/ACT/brightness)
+  fi
+fi
 
 MODEL=$(grep -oP 'Revision\s*:\s*\K[^ ]*' /proc/cpuinfo)
+
 if [[ "$MODEL" != "000d" ]]; then
-  PTINIT=$(awk -F'[][]' '{print $2}' /sys/class/leds/led1/trigger)
-  PBINIT=$(cat /sys/class/leds/led1/brightness)
+  if [ -d /sys/class/leds/led1 ]; then
+	PTINIT=$(awk -F'[][]' '{print $2}' /sys/class/leds/led1/trigger)
+	PBINIT=$(cat /sys/class/leds/led1/brightness)
+  else
+	if [ -d /sys/class/leds/PWR ]; then
+	  PTINIT=$(awk -F'[][]' '{print $2}' /sys/class/leds/PWR/trigger)
+	  PBINIT=$(cat /sys/class/leds/PWR/brightness)
+	fi
+  fi
 fi
 
 #Indicators
@@ -85,10 +100,25 @@ case "$1" in
 esac
 
 #Restore initial state
-echo $ABINIT | sudo tee /sys/class/leds/led0/brightness >> /dev/null
-echo $ATINIT | sudo tee /sys/class/leds/led0/trigger >> /dev/null
+if [ -d /sys/class/leds/led0 ]; then
+  echo $ABINIT | sudo tee /sys/class/leds/led0/brightness >> /dev/null
+  echo $ATINIT | sudo tee /sys/class/leds/led0/trigger >> /dev/null
+else
+  if [ -d /sys/class/leds/ACT ]; then
+	echo $ABINIT | sudo tee /sys/class/leds/ACT/brightness >> /dev/null
+	echo $ATINIT | sudo tee /sys/class/leds/ACT/trigger >> /dev/null
+  fi
+fi
+
 
 if [[ "$MODEL" != "000d" ]]; then
-  echo $PBINIT | sudo tee /sys/class/leds/led1/brightness >> /dev/null
-  echo $PTINIT | sudo tee /sys/class/leds/led1/trigger >> /dev/null
+  if [ -d /sys/class/leds/led1 ]; then
+	echo $PBINIT | sudo tee /sys/class/leds/led1/brightness >> /dev/null
+	echo $PTINIT | sudo tee /sys/class/leds/led1/trigger >> /dev/null
+  else
+	if [ -d /sys/class/leds/PWR ]; then
+	  echo $PBINIT | sudo tee /sys/class/leds/PWR/brightness >> /dev/null
+	  echo $PTINIT | sudo tee /sys/class/leds/PWR/trigger >> /dev/null
+	fi
+  fi
 fi
