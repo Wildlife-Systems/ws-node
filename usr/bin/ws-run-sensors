@@ -53,14 +53,14 @@ do
 	do
 		pi-pwr off $(echo "$CONFIG" | jq -r ".run[$I] .off[]" | tr '\n' ' ')
   		pi-pwr on $(echo "$CONFIG" | jq -r ".run[$I] .on[]" | tr '\n' ' ')
-		ACTION=`echo $CONFIG| jq -r ".run[$I] .action"`
+		ACTION=`echo $CONFIG | jq -r ".run[$I] .action"`
 		echo $ACTION
 		sudo ws-heartbeat $ACTION &
         	case  $ACTION in
 				sensor_read)
 					SENSOR=$(echo "$CONFIG" | jq -r ".run[$I] .sensor")
 					SENSOR_TYPE=$(echo "$CONFIG" | jq -r ".run[$I] .sensor_type")
-					
+
 					SENSOR_DATA=$(sr "$SENSOR" "$SENSOR_TYPE")
 					;;
 				sleep)
@@ -72,13 +72,7 @@ do
 					case $METHOD in
 						file)
 							FILE=`echo $CONFIG| jq -r ".run[$I] .file"`
-
-							# Append SENSOR_DATA to the file
-							if [[ -n "$SENSOR_DATA" ]]; then
-								echo "$SENSOR_DATA" >> "$FILE"
-							else
-								echo "No sensor data to write to file."
-							fi
+								echo "$SENSOR_DATA" >> $FILE
 							;;
 						script)
 							SCRIPT=`echo $CONFIG| jq -r ".run[$I] .script"`
