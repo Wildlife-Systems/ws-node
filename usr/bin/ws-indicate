@@ -38,7 +38,7 @@ else
   fi
 fi
 
-MODEL=$(grep -oP 'Revision\s*:\s*\K[^ ]*' /proc/cpuinfo)
+MODEL=$(pi-data model)
 
 if [[ "$MODEL" != "000d" ]]; then
   if [ -d /sys/class/leds/led1 ]; then

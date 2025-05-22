@@ -17,7 +17,7 @@ STATUS="${1:-}"
 WSTOKEN_PATH=/etc/ws/ws-token
 if [[ -f "$WSTOKEN_PATH" ]]; then
   TOKEN=$(<"$WSTOKEN_PATH")
-  SERIAL=$(grep Serial /proc/cpuinfo | cut -d ' ' -f 2)
+  SERIAL=$(pi-data serial)
   HNAME=$(hostname)
   HB=$(sr onboard)
   MACADDR=$(<"/sys/class/net/eth0/address")

@@ -23,7 +23,7 @@ PASSWD="manual"
 FIREWALL="manual"
 
 #Device serial
-wsSERIAL=`grep Serial /proc/cpuinfo | cut -d ' ' -f 2`
+wsSERIAL=$(pi-data serial)
 
 #Check if device is registered or should run as standalone
 URL="https://devices.wildlife.systems/info/?id=$wsSERIAL"
