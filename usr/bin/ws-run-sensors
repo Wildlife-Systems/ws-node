@@ -55,13 +55,14 @@ do
   		pi-pwr on $(echo "$CONFIG" | jq -r ".run[$I] .on[]" | tr '\n' ' ')
 		ACTION=`echo $CONFIG | jq -r ".run[$I] .action"`
 		echo $ACTION
-		sudo ws-heartbeat $ACTION &
+		#ws-heartbeat $ACTION
         	case  $ACTION in
 				sensor_read)
 					SENSOR=$(echo "$CONFIG" | jq -r ".run[$I] .sensor")
 					SENSOR_TYPE=$(echo "$CONFIG" | jq -r ".run[$I] .sensor_type")
 
 					SENSOR_DATA=$(sr "$SENSOR" "$SENSOR_TYPE")
+echo $SENSOR_DATA
 					;;
 				sleep)
 					DURATION=$(echo "$CONFIG" | jq -r ".run[$I] .duration")
@@ -103,7 +104,7 @@ do
 			esac
 
 		I=$(($I + 1))
-		ws-indicate heartbeat
+		#ws-indicate heartbeat
 	onOff
 	done
 done
