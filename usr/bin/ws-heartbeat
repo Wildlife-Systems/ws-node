@@ -18,7 +18,7 @@ WSTOKEN_PATH=/etc/ws/ws-token
 if [[ -f "$WSTOKEN_PATH" ]]; then
   TOKEN=$(<"$WSTOKEN_PATH")
   SERIAL=$(pi-data serial)
-  HNAME=$(hostname)
+  HNAME=$(pi-data hostname)
   HB=$(sr onboard)
   MACADDR=$(<"/sys/class/net/eth0/address")
   ACTION=$(curl -s --data \
