@@ -1,3 +1,9 @@
+ws-node (1.2.3) stable; urgency=medium
+
+  * Make use of pi-data
+
+ -- Ed Baker <ed@ebaker.me.uk>  Thu, 22 May 2025 10:38:21 +0100
+
 ws-node (1.2.2) stable; urgency=medium
 
   * Dependencies on sound-device-control, pi-pwr
