@@ -87,6 +87,17 @@ do
 					DURATION=$(echo "$CONFIG" | jq -r ".run[$I] .duration")
 					sleep "$DURATION"
 					;;
+				check-network)
+					# Check if we can ping default gateway
+					GATEWAY=$(pi-data default-gateway)
+					if [[ -z "$GATEWAY" ]]; then
+						pi-util reset-network
+					fi
+					if ! ping -c 1 "$GATEWAY" &> /dev/null; then
+						pi-util reset-network
+					fi
+
+					;;
 				 upload-delete)
 					METHOD=`echo $CONFIG| jq -r ".run[$I] .method"`
 					UPPATH=`echo $CONFIG| jq -r ".run[$I] .path"`
