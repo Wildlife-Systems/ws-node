@@ -62,7 +62,6 @@ do
 					SENSOR_TYPE=$(echo "$CONFIG" | jq -r ".run[$I] .sensor_type")
 
 					SENSOR_DATA=$(sr "$SENSOR" "$SENSOR_TYPE")
-echo $SENSOR_DATA
 					;;
 				sleep)
 					DURATION=$(echo "$CONFIG" | jq -r ".run[$I] .duration")
@@ -91,7 +90,7 @@ echo $SENSOR_DATA
 							fi
 						    # Pass SENSOR_DATA to the script
 							if [[ -n "$SENSOR_DATA" ]]; then
-								$SCRIPT "$SENSOR_DATA" &
+								echo "$SENSOR_DATA" | $SCRIPT &
 							else
 								echo "No sensor data to pass to script."
 							fi
