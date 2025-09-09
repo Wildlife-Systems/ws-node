@@ -1,0 +1,123 @@
+#!/bin/bash
+
+# WildlifeSystems
+#
+# This script is part of the WildlifeSystems project. For further information
+# please refer to https://docs.wildlife.systems, or for more information on
+# the project itself, please refer to https://wildlife.systems.
+
+# Return codes
+#
+# Further information on WildlifeSystems standard reurn codes can be found
+# at https://docs.wildlife.systems/return-codes.html
+# 0 - Success
+# 1 - Already running
+# 11 - Incorrect filename pattern
+
+
+#Check if this script already running
+if [[ "$(pgrep -c ws-run-audio)" -gt 1 ]]; then
+  echo "ws-run-audio already running. Exiting."
+  exit 1
+fi
+
+trap "echo 'Terminating ws-run-audio...'; exit 0" SIGINT SIGTERM
+
+echo "Starting ws-run-audio..."
+
+#Config
+CONFIG_FILE="/etc/ws/upload.conf"
+if [[ ! -f "$CONFIG_FILE" || ! -r "$CONFIG_FILE" ]]; then
+  echo "Error: Config file '$CONFIG_FILE' not found or not readable."
+  exit 2
+fi
+CONFIG=$(cat "$CONFIG_FILE")
+
+#Check config exists
+if [[ -z "$CONFIG" ]]; then
+  echo "No config file found."
+  exit 2
+fi
+
+
+# Create empty array to store filenames
+FNARRAY=()
+
+N=$(echo "$CONFIG" | jq -r ".run | length")
+I=0
+while [ $I  -lt $N ];
+do
+    pi-pwr off $(echo "$CONFIG" | jq -r ".run[$I] .off[]" | tr '\n' ' ')
+    pi-pwr on $(echo "$CONFIG" | jq -r ".run[$I] .on[]" | tr '\n' ' ')
+    ACTION=`echo $CONFIG| jq -r ".run[$I] .action"`
+    echo $ACTION
+    sudo ws-heartbeat $ACTION &
+        case  $ACTION in
+            upload-delete)
+                METHOD=`echo $CONFIG| jq -r ".run[$I] .method"`
+                UPPATH=`echo $CONFIG| jq -r ".run[$I] .path"`
+                EXTENSION=`echo $CONFIG| jq -r ".run[$I] .extension"`
+                ASYNC=`echo $CONFIG| jq -r ".run[$I] .async"`
+                case $METHOD in
+                    s3cmd)
+                        S3UP=`eval echo "s3cmd put $FN.$EXTENSION s3://$UPPATH"`
+                        S3UP="$S3UP && rm $FN.$EXTENSION"
+                        if [[ "$ASYNC" == "true" ]]; then
+                            S3UP="( $S3UP )&";
+                        fi
+                        eval $S3UP
+                        ;;
+                    mv)
+                        MVUPPATH=$(eval "echo ${UPPATH}")
+
+                        # Check if the destination directory exists
+                        if [[ ! -d "$MVUPPATH" ]]; then
+                                        mkdir -p "$MVUPPATH"
+                        fi
+
+                        mv $FN.$EXTENSION $MVUPPATH &
+                        ;;
+                    script)
+                        SCRIPT=`echo $CONFIG| jq -r ".run[$I] .script"`
+                        if [[ ! -x "$SCRIPT" ]]; then
+                            echo "Script $SCRIPT not executable."
+                        fi
+                        # Loop over the files in the array
+                        for FILE in "${FNARRAY[@]}"; do
+                            # Check if the file exists
+                            if [[ -f "$FILE" ]]; then
+                                #Call the script with the file as an argument
+                                $SCRIPT "$FILE" &
+                            else
+                                echo "File $FILE not found."
+                            fi
+                            # Remove the file from the array
+                            FNARRAY=("${FNARRAY[@]/$FILE}")
+                        done
+                        ;;
+                esac
+                ;;
+            clearup)
+                METHOD=`echo $CONFIG| jq -r ".run[$I] .method"`
+                case $METHOD in
+                    script)
+                        SCRIPT=`echo $CONFIG| jq -r ".run[$I] .script"`
+                        # Check if the script exists and is executable
+                        if [[ -x "$SCRIPT" ]]; then
+                                $SCRIPT &
+                        else
+                                echo "Script $SCRIPT not found or not executable."
+                        fi
+                        ;;
+                    *)
+                        echo "Unknown method: $METHOD" 1>&2
+                        ;;
+                esac
+                ;;
+            *)
+                echo "Unknown action: $ACTION" 1>&2
+                ;;
+        esac
+
+    I=$(($I + 1))
+done
