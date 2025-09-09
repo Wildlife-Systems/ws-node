@@ -24,6 +24,8 @@ case "$1" in
             rm -rf /etc/ws/ || true
             # Remove log files
             rm -f /var/log/ws-*.log || true
+            # Remove state files
+            rm -rf /var/lib/ws-node/ || true
         fi
         ;;
         

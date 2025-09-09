@@ -6,8 +6,41 @@ case "$1" in
     remove|upgrade|deconfigure)
         echo "Stopping WildlifeSystems services..."
         
+        # Create state directory
+        mkdir -p /var/lib/ws-node
+        
+        # Save currently enabled services and timers
+        echo "Saving service states..."
+        > /var/lib/ws-node/enabled-services.txt
+        > /var/lib/ws-node/active-services.txt
+        
+        # Check WildlifeSystems services and timers
+        for unit in /etc/systemd/system/ws-*.service /etc/systemd/system/ws-*.timer; do
+            if systemctl is-enabled "$unit" >/dev/null 2>&1; then
+                echo "$unit" >> /var/lib/ws-node/enabled-services.txt
+                echo "Saved enabled state for $unit"
+            fi
+            
+            if systemctl is-active "$unit" >/dev/null 2>&1; then
+                echo "$unit" >> /var/lib/ws-node/active-services.txt
+                echo "Saved active state for $unit"
+            fi
+        done
+        
+        # Stop timers first (they control oneshot services)
+        for timer in /etc/systemd/system/ws-*.timer; do
+            if systemctl is-active "$timer" >/dev/null 2>&1; then
+                echo "Stopping $timer"
+                systemctl stop "$timer" || true
+            fi
+            if systemctl is-enabled "$timer" >/dev/null 2>&1; then
+                echo "Disabling $timer"
+                systemctl disable "$timer" || true
+            fi
+        done
+        
         # Stop services
-        for service in /etc/systemd/system/ws-*.service /etc/systemd/system/ws-*.timer; do
+        for service in /etc/systemd/system/ws-*.service; do
             if systemctl is-active "$service" >/dev/null 2>&1; then
                 echo "Stopping $service"
                 systemctl stop "$service" || true

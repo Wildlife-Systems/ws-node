@@ -18,19 +18,30 @@ case "$1" in
         # Reload systemd to pick up new service files
         systemctl daemon-reload
         
-        # Enable and start services
-        echo "Enabling ws-audio.service"
-        systemctl enable ws-audio.service
-        systemctl start ws-audio.service
+        # Check if we have saved service states
+        if [[ -f /var/lib/ws-node/enabled-services.txt ]]; then
+            echo "Restoring previously enabled services..."
+            while IFS= read -r unit; do
+                if [[ -n "$unit" ]]; then
+                    echo "Enabling $unit"
+                    systemctl enable "$unit" || true
+                fi
+            done < /var/lib/ws-node/enabled-services.txt
+        fi
         
-        # Enable and start timers (these will also enable their associated services)
-        echo "Enabling ws-sensors.timer"
-        systemctl enable ws-sensors.timer
-        systemctl start ws-sensors.timer
+        if [[ -f /var/lib/ws-node/active-services.txt ]]; then
+            echo "Restoring previously active services..."
+            while IFS= read -r unit; do
+                if [[ -n "$unit" ]]; then
+                    echo "Starting $unit"
+                    systemctl start "$unit" || true
+                fi
+            done < /var/lib/ws-node/active-services.txt
+        fi
         
-        echo "Enabling ws-upload.timer"
-        systemctl enable ws-upload.timer
-        systemctl start ws-upload.timer
+        # Clean up state files after restore
+        rm -f /var/lib/ws-node/enabled-services.txt || true
+        rm -f /var/lib/ws-node/active-services.txt || true
         
         echo "WildlifeSystems services configured successfully"
         ;;
