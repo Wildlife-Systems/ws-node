@@ -1,5 +1,4 @@
 #!/bin/bash
-# filepath: c:\Users\edwab\OneDrive - Natural History Museum\Documents\GitHub\ws-node\DEBIAN\prerm
 
 set -e
 
@@ -7,17 +6,8 @@ case "$1" in
     remove|upgrade|deconfigure)
         echo "Stopping WildlifeSystems services..."
         
-        # Stop and disable timers first
-        for timer in ws-sensors.timer ws-upload.timer; do
-            if systemctl is-enabled "$timer" >/dev/null 2>&1; then
-                echo "Stopping and disabling $timer"
-                systemctl stop "$timer" || true
-                systemctl disable "$timer" || true
-            fi
-        done
-        
         # Stop services
-        for service in ws-audio.service ws-run.service ws-sensors.service ws-upload.service; do
+        for service in /etc/systemd/system/ws-*.service /etc/systemd/system/ws-*.timer; do
             if systemctl is-active "$service" >/dev/null 2>&1; then
                 echo "Stopping $service"
                 systemctl stop "$service" || true

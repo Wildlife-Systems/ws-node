@@ -23,10 +23,6 @@ case "$1" in
         systemctl enable ws-audio.service
         systemctl start ws-audio.service
         
-        echo "Enabling ws-run.service"
-        systemctl enable ws-run.service
-        systemctl start ws-run.service
-        
         # Enable and start timers (these will also enable their associated services)
         echo "Enabling ws-sensors.timer"
         systemctl enable ws-sensors.timer
