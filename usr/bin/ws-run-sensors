@@ -63,47 +63,11 @@ do
 
 					SENSOR_DATA=$(sr "$SENSOR" "$SENSOR_TYPE")
 					;;
-				sleep)
-					DURATION=$(echo "$CONFIG" | jq -r ".run[$I] .duration")
-					sleep "$DURATION"
-					;;
-				upload-delete)
-					METHOD=`echo $CONFIG| jq -r ".run[$I] .method"`
-					case $METHOD in
-						file)
-							FILE=$(echo $CONFIG | jq -r ".run[$I] .file")
-							if [[ -z "$FILE" ]]; then
-							  echo "Error: File path is not defined in the configuration."
-							  continue
-							fi
-							if [[ -z "$SENSOR_DATA" ]]; then
-							  echo "Warning: No sensor data to write to $FILE."
-							  continue
-							fi
-							echo "Writing to file: $FILE"
-							echo "$SENSOR_DATA" >> $FILE
-							;;
-						script)
-							SCRIPT=`echo $CONFIG| jq -r ".run[$I] .script"`
-							if [[ ! -x "$SCRIPT" ]]; then
-								echo "Script $SCRIPT not executable."
-							fi
-						    # Pass SENSOR_DATA to the script
-							if [[ -n "$SENSOR_DATA" ]]; then
-								echo "$SENSOR_DATA" | $SCRIPT &
-							else
-								echo "No sensor data to pass to script."
-							fi
-							;;
-					esac
-					;;
 				*)
 					echo "Unknown action: $ACTION" 1>&2
 					;;
 			esac
 
 		I=$(($I + 1))
-		#ws-indicate heartbeat
-	onOff
 	done
 done

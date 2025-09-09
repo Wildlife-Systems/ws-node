@@ -3,12 +3,8 @@ Description=WildlifeSystems Sensors Runtime Script
 After=network.target
 
 [Service]
-Type=simple
+Type=oneshot
 User=root
 ExecStart=/usr/bin/ws-run-sensors
 StandardOutput=file:/var/log/ws-run-sensors.log
 StandardError=file:/var/log/ws-run-sensors-error.log
-Restart=on-failure
-
-[Install]
-WantedBy=multi-user.target
