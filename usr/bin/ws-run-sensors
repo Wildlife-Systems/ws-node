@@ -39,11 +39,6 @@ if [[ -z "$CONFIG" ]]; then
   exit 2
 fi
 
-function onOff {
-  pi-pwr off "$(echo "$CONFIG" | jq -r '.init .off[]' | tr '\n' ' ')"
-  pi-pwr on "$(echo "$CONFIG" | jq -r '.init .on[]' | tr '\n' ' ')"
-}
-
 while true;
 do
     SENSOR_DATA=""
