@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 chmod +x /usr/bin/ws-indicate
 chmod +x /usr/bin/ws-heartbeat
 chmod +x /usr/bin/ws-run-audio
@@ -9,6 +11,43 @@ chmod +x /usr/bin/ws-setup
 
 chown root:root /etc/sudoers.d/ws
 
-systemctl daemon-reload
+case "$1" in
+    configure)
+        echo "Configuring WildlifeSystems services..."
+        
+        # Reload systemd to pick up new service files
+        systemctl daemon-reload
+        
+        # Enable and start services
+        echo "Enabling ws-audio.service"
+        systemctl enable ws-audio.service
+        systemctl start ws-audio.service
+        
+        echo "Enabling ws-run.service"
+        systemctl enable ws-run.service
+        systemctl start ws-run.service
+        
+        # Enable and start timers (these will also enable their associated services)
+        echo "Enabling ws-sensors.timer"
+        systemctl enable ws-sensors.timer
+        systemctl start ws-sensors.timer
+        
+        echo "Enabling ws-upload.timer"
+        systemctl enable ws-upload.timer
+        systemctl start ws-upload.timer
+        
+        echo "WildlifeSystems services configured successfully"
+        ;;
+        
+    abort-upgrade|abort-remove|abort-deconfigure)
+        # Handle rollback scenarios
+        echo "Handling package configuration abort for case: $1"
+        ;;
+        
+    *)
+        echo "postinst called with unknown argument \`$1'" >&2
+        exit 1
+        ;;
+esac
 
 exit 0

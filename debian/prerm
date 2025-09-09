@@ -1,11 +1,45 @@
 #!/bin/bash
+# filepath: c:\Users\edwab\OneDrive - Natural History Museum\Documents\GitHub\ws-node\DEBIAN\prerm
+
 set -e
 
-# Stop and disable the systemd service
-systemctl stop ws-audio.service || true
-systemctl disable ws-audio.service || true
-
-systemctl stop ws-sensors.service || true
-systemctl disable ws-sensors.service || true
+case "$1" in
+    remove|upgrade|deconfigure)
+        echo "Stopping WildlifeSystems services..."
+        
+        # Stop and disable timers first
+        for timer in ws-sensors.timer ws-upload.timer; do
+            if systemctl is-enabled "$timer" >/dev/null 2>&1; then
+                echo "Stopping and disabling $timer"
+                systemctl stop "$timer" || true
+                systemctl disable "$timer" || true
+            fi
+        done
+        
+        # Stop services
+        for service in ws-audio.service ws-run.service ws-sensors.service ws-upload.service; do
+            if systemctl is-active "$service" >/dev/null 2>&1; then
+                echo "Stopping $service"
+                systemctl stop "$service" || true
+            fi
+            if systemctl is-enabled "$service" >/dev/null 2>&1; then
+                echo "Disabling $service"
+                systemctl disable "$service" || true
+            fi
+        done
+        
+        # Reload systemd
+        systemctl daemon-reload || true
+        ;;
+    
+    failed-upgrade)
+        # Don't stop services on failed upgrade
+        ;;
+    
+    *)
+        echo "prerm called with unknown argument \`$1'" >&2
+        exit 1
+        ;;
+esac
 
 exit 0
