@@ -3,7 +3,9 @@ Description=Run WildlifeSystems sensor read script
 Requires=ws-sensors.service
 
 [Timer]
-OnCalendar=*:0/1
+Unit=ws-sensors.service
+OnCalendar=minutely
+AccuracySec=1s
 Persistent=true
 
 [Install]

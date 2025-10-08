@@ -3,7 +3,8 @@ Description=Run WildlifeSystems Upload Script
 Requires=ws-upload.service
 
 [Timer]
-OnCalendar=*:0/5
+OnCalendar=minutely
+AccuracySec=1s
 Persistent=true
 
 [Install]

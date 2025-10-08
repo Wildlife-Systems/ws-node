@@ -44,67 +44,66 @@ function onOff {
   pi-pwr on "$(echo "$CONFIG" | jq -r '.init .on[]' | tr '\n' ' ')"
 }
 
-while true;
+
+SENSOR_DATA=""
+N=$(echo "$CONFIG" | jq -r ".run | length")
+I=0
+while [ $I  -lt $N ];
 do
-    SENSOR_DATA=""
-        N=$(echo "$CONFIG" | jq -r ".run | length")
-        I=0
-        while [ $I  -lt $N ];
-        do
-                pi-pwr off $(echo "$CONFIG" | jq -r ".run[$I] .off[]" | tr '\n' ' ')
-                pi-pwr on $(echo "$CONFIG" | jq -r ".run[$I] .on[]" | tr '\n' ' ')
-                ACTION=`echo $CONFIG | jq -r ".run[$I] .action"`
-                echo $ACTION
-                #ws-heartbeat $ACTION
-                case  $ACTION in
-                                sensor_read)
-                                        SENSOR=$(echo "$CONFIG" | jq -r ".run[$I] .sensor")
-                                        SENSOR_TYPE=$(echo "$CONFIG" | jq -r ".run[$I] .sensor_type")
+        pi-pwr off $(echo "$CONFIG" | jq -r ".run[$I] .off[]" | tr '\n' ' ')
+        pi-pwr on $(echo "$CONFIG" | jq -r ".run[$I] .on[]" | tr '\n' ' ')
+        ACTION=`echo $CONFIG | jq -r ".run[$I] .action"`
+        echo $ACTION
+        #ws-heartbeat $ACTION
+        case  $ACTION in
+                        sensor_read)
+                                SENSOR=$(echo "$CONFIG" | jq -r ".run[$I] .sensor")
+                                SENSOR_TYPE=$(echo "$CONFIG" | jq -r ".run[$I] .sensor_type")
 
-                                        SENSOR_DATA=$(sr "$SENSOR" "$SENSOR_TYPE")
-echo $SENSOR_DATA
-                                        ;;
-                                sleep)
-                                        DURATION=$(echo "$CONFIG" | jq -r ".run[$I] .duration")
-                                        sleep "$DURATION"
-                                        ;;
-                                upload-delete)
-                                        METHOD=`echo $CONFIG| jq -r ".run[$I] .method"`
-                                        case $METHOD in
-                                                file)
-                                                        FILE=$(echo $CONFIG | jq -r ".run[$I] .file")
-                                                        if [[ -z "$FILE" ]]; then
-                                                          echo "Error: File path is not defined in the configuration."
-                                                          continue
-                                                        fi
-                                                        if [[ -z "$SENSOR_DATA" ]]; then
-                                                          echo "Warning: No sensor data to write to $FILE."
-                                                          continue
-                                                        fi
-                                                        echo "Writing to file: $FILE"
-                                                        echo "$SENSOR_DATA" >> $FILE
-                                                        ;;
-                                                script)
-                                                        SCRIPT=`echo $CONFIG| jq -r ".run[$I] .script"`
-                                                        if [[ ! -x "$SCRIPT" ]]; then
-                                                                echo "Script $SCRIPT not executable."
-                                                        fi
-                                                    # Pass SENSOR_DATA to the script
-                                                        if [[ -n "$SENSOR_DATA" ]]; then
-                                                                echo "$SENSOR_DATA" | $SCRIPT &
-                                                        else
-                                                                echo "No sensor data to pass to script."
-                                                        fi
-                                                        ;;
-                                        esac
-                                        ;;
-                                *)
-                                        echo "Unknown action: $ACTION" 1>&2
-                                        ;;
-                        esac
+                                SENSOR_DATA=$(sr "$SENSOR" "$SENSOR_TYPE")
+                                echo $SENSOR_DATA
+                                ;;
+                        sleep)
+                                DURATION=$(echo "$CONFIG" | jq -r ".run[$I] .duration")
+                                sleep "$DURATION"
+                                ;;
+                        upload-delete)
+                                METHOD=`echo $CONFIG| jq -r ".run[$I] .method"`
+                                case $METHOD in
+                                        file)
+                                                FILE=$(echo $CONFIG | jq -r ".run[$I] .file")
+                                                if [[ -z "$FILE" ]]; then
+                                                        echo "Error: File path is not defined in the configuration."
+                                                        continue
+                                                fi
+                                                if [[ -z "$SENSOR_DATA" ]]; then
+                                                        echo "Warning: No sensor data to write to $FILE."
+                                                        continue
+                                                fi
+                                                echo "Writing to file: $FILE"
+                                                echo "$SENSOR_DATA" >> $FILE
+                                                ;;
+                                        script)
+                                                SCRIPT=`echo $CONFIG| jq -r ".run[$I] .script"`
+                                                if [[ ! -x "$SCRIPT" ]]; then
+                                                        echo "Script $SCRIPT not executable."
+                                                fi
+                                                # Pass SENSOR_DATA to the script
+                                                if [[ -n "$SENSOR_DATA" ]]; then
+                                                        echo "$SENSOR_DATA" | $SCRIPT &
+                                                else
+                                                        echo "No sensor data to pass to script."
+                                                fi
+                                                ;;
+                                esac
+                                ;;
+                        *)
+                                echo "Unknown action: $ACTION" 1>&2
+                                ;;
+                esac
 
-                I=$(($I + 1))
-                #ws-indicate heartbeat
-        onOff
-        done
+        I=$(($I + 1))
+        #ws-indicate heartbeat
+onOff
 done
+
