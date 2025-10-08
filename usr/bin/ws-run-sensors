@@ -86,13 +86,17 @@ do
                                         script)
                                                 SCRIPT=`echo $CONFIG| jq -r ".run[$I] .script"`
                                                 if [[ ! -x "$SCRIPT" ]]; then
-                                                        echo "Script $SCRIPT not executable."
+                                                  echo "Script $SCRIPT not executable."
+                                                  continue
                                                 fi
-                                                # Pass SENSOR_DATA to the script
+
                                                 if [[ -n "$SENSOR_DATA" ]]; then
-                                                        echo "$SENSOR_DATA" | $SCRIPT &
-                                                else
-                                                        echo "No sensor data to pass to script."
+                                                  # Run synchronously, capture stdout+stderr and exit code
+                                                  OUTPUT=$("$SCRIPT" <<< "$SENSOR_DATA" 2>&1)
+                                                  EXIT=$?
+                                                  if [[ $EXIT -ne 0 ]]; then
+                                                    echo "Script $SCRIPT failed (exit $EXIT): $OUTPUT"
+                                                  fi
                                                 fi
                                                 ;;
                                 esac
@@ -107,3 +111,4 @@ do
 onOff
 done
 
+exit 0
