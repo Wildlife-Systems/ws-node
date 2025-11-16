@@ -104,7 +104,7 @@ do
                         SCRIPT=`echo $CONFIG| jq -r ".run[$I] .script"`
                         # Check if the script exists and is executable
                         if [[ -x "$SCRIPT" ]]; then
-                                $SCRIPT &
+                                "$SCRIPT"
                         else
                                 echo "Script $SCRIPT not found or not executable."
                         fi
