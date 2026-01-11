@@ -12,7 +12,7 @@
 # at https://docs.wildlife.systems/return-codes.html
 # 0 - Success
 # 1 - Already running
-# 2 - Config file missing or not readable
+# 3 - Config file missing or not readable
 # 11 - Incorrect filename pattern
 
 
@@ -30,7 +30,7 @@ echo "Starting ws-upload..."
 CONFIG_FILE="/etc/ws/upload.conf"
 if [[ ! -f "$CONFIG_FILE" || ! -r "$CONFIG_FILE" ]]; then
   echo "Error: Config file '$CONFIG_FILE' not found or not readable."
-  exit 2
+  exit 3
 fi
 CONFIG=$(cat "$CONFIG_FILE")
 
