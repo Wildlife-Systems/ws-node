@@ -1,3 +1,9 @@
+ws-node (1.4.1) stable; urgency=medium
+
+  * ws-upload enhancements
+
+ -- Ed Baker <ed@ebaker.me.uk>  Sun, 11 Jan 2026 16:11:06 +0000
+
 ws-node (1.4.0) stable; urgency=medium
 
   * No background jobs in upload timer script
