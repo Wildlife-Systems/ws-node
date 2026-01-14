@@ -13,8 +13,6 @@ sudo apt update
 sudo apt install ws-node
 ```
 
-The node can then be configured by running `ws-setup` from the terminal.
-
 ## Development
 
 - Initial development of the node software was done as part of the Leverhulme Trust funded [Automated Acoustic Observatories](https://ebaker.me.uk/aao) project at the [University of York](https://york.ac.uk).
