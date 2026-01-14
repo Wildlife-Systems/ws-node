@@ -33,11 +33,11 @@ case "$1" in
         for timer in /etc/systemd/system/ws-*.timer; do
             if systemctl is-active "$timer" >/dev/null 2>&1; then
                 echo "Stopping $timer"
-                systemctl stop "$timer" || true
+                deb-systemd-invoke stop "$timer" || true
             fi
             if systemctl is-enabled "$timer" >/dev/null 2>&1; then
                 echo "Disabling $timer"
-                systemctl disable "$timer" || true
+                deb-systemd-helper disable "$timer" || true
             fi
         done
         
@@ -45,11 +45,11 @@ case "$1" in
         for service in /etc/systemd/system/ws-*.service; do
             if systemctl is-active "$service" >/dev/null 2>&1; then
                 echo "Stopping $service"
-                systemctl stop "$service" || true
+                deb-systemd-invoke stop "$service" || true
             fi
             if systemctl is-enabled "$service" >/dev/null 2>&1; then
                 echo "Disabling $service"
-                systemctl disable "$service" || true
+                deb-systemd-helper disable "$service" || true
             fi
         done
         

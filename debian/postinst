@@ -26,7 +26,7 @@ case "$1" in
             while IFS= read -r unit; do
                 if [[ -n "$unit" ]]; then
                     echo "Enabling $unit"
-                    systemctl enable "$unit" || true
+                    deb-systemd-helper enable "$unit" || true
                 fi
             done < /var/lib/ws-node/enabled-services.txt
         fi
@@ -36,7 +36,7 @@ case "$1" in
             while IFS= read -r unit; do
                 if [[ -n "$unit" ]]; then
                     echo "Starting $unit"
-                    systemctl start "$unit" || true
+                    deb-systemd-invoke start "$unit" || true
                 fi
             done < /var/lib/ws-node/active-services.txt
         fi
