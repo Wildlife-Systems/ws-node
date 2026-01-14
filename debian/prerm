@@ -2,6 +2,8 @@
 
 set -e
 
+###DEBHELPER###
+
 case "$1" in
     remove|upgrade|deconfigure)
         echo "Stopping WildlifeSystems services..."

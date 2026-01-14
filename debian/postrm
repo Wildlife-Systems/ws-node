@@ -3,6 +3,8 @@
 
 set -e
 
+###DEBHELPER###
+
 case "$1" in
     remove|purge)
         echo "Cleaning up WildlifeSystems services..."
