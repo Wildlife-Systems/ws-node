@@ -1,5 +1,7 @@
 #!/bin/bash
 
+###DEBHELPER###
+
 set -e
 
 chmod +x /usr/bin/ws-indicate
