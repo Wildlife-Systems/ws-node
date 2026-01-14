@@ -17,6 +17,14 @@ case "$1" in
     configure)
         echo "Configuring WildlifeSystems services..."
         
+        # Clean up old service file locations from previous versions
+        for old_file in /etc/systemd/system/ws-*.service /etc/systemd/system/ws-*.timer; do
+            if [ -f "$old_file" ]; then
+                echo "Removing old service file: $old_file"
+                rm -f "$old_file" || true
+            fi
+        done
+        
         # Reload systemd to pick up new service files
         systemctl daemon-reload
         

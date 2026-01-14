@@ -10,7 +10,7 @@ case "$1" in
         echo "Cleaning up WildlifeSystems services..."
         
         # Remove service files if they still exist
-        for file in /etc/systemd/system/ws-*.service /etc/systemd/system/ws-*.timer; do
+        for file in /lib/systemd/system/ws-*.service /lib/systemd/system/ws-*.timer; do
             if [ -f "$file" ]; then
                 echo "Removing $file"
                 rm -f "$file" || true

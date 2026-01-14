@@ -17,7 +17,7 @@ case "$1" in
         > /var/lib/ws-node/active-services.txt
         
         # Check WildlifeSystems services and timers
-        for unit in /etc/systemd/system/ws-*.service /etc/systemd/system/ws-*.timer; do
+        for unit in /lib/systemd/system/ws-*.service /lib/systemd/system/ws-*.timer; do
             if systemctl is-enabled "$unit" >/dev/null 2>&1; then
                 echo "$unit" >> /var/lib/ws-node/enabled-services.txt
                 echo "Saved enabled state for $unit"
@@ -30,7 +30,7 @@ case "$1" in
         done
         
         # Stop timers first (they control oneshot services)
-        for timer in /etc/systemd/system/ws-*.timer; do
+        for timer in /lib/systemd/system/ws-*.timer; do
             if systemctl is-active "$timer" >/dev/null 2>&1; then
                 echo "Stopping $timer"
                 deb-systemd-invoke stop "$timer" || true
@@ -42,7 +42,7 @@ case "$1" in
         done
         
         # Stop services
-        for service in /etc/systemd/system/ws-*.service; do
+        for service in /lib/systemd/system/ws-*.service; do
             if systemctl is-active "$service" >/dev/null 2>&1; then
                 echo "Stopping $service"
                 deb-systemd-invoke stop "$service" || true
