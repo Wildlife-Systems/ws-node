@@ -1,0 +1,33 @@
+.TH WS-RUN-SENSORS 1 "January 2026" "ws-node 1.4.1" "WildlifeSystems Commands"
+.SH NAME
+ws-run-sensors \- run sensor data collection for WildlifeSystems
+.SH SYNOPSIS
+.B ws-run-sensors
+.SH DESCRIPTION
+.B ws-run-sensors
+collects data from sensors attached to WildlifeSystems nodes. It reads
+configuration from
+.I /etc/ws/sensors.conf
+and manages sensor hardware interfaces.
+.PP
+This command is typically run by a systemd timer (ws-sensors.timer) rather than
+invoked directly.
+.SH FILES
+.TP
+.I /etc/ws/sensors.conf
+JSON configuration file for sensor collection.
+.TP
+.I /var/log/ws-run-sensors.log
+Standard output log file.
+.TP
+.I /var/log/ws-run-sensors-error.log
+Error log file.
+.SH SEE ALSO
+.BR ws-upload (1),
+.BR ws-run-audio (1),
+.BR ws-heartbeat (1)
+.SH AUTHOR
+Ed Baker <ed@ebaker.me.uk>
+.SH COPYRIGHT
+Copyright \(co 2024-2026 Ed Baker.
+License GPLv2+: GNU GPL version 2 or later.

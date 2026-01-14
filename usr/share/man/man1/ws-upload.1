@@ -1,0 +1,46 @@
+.TH WS-UPLOAD 1 "January 2026" "ws-node 1.4.1" "WildlifeSystems Commands"
+.SH NAME
+ws-upload \- upload files for WildlifeSystems
+.SH SYNOPSIS
+.B ws-upload
+.SH DESCRIPTION
+.B ws-upload
+processes and uploads audio, image, and sensor data files recorded by
+WildlifeSystems nodes. It reads configuration from
+.I /etc/ws/upload.conf
+and supports multiple upload methods including S3, local moves, and custom scripts.
+.PP
+This command is typically run by a systemd timer (ws-upload.timer) rather than
+invoked directly.
+.SH FILES
+.TP
+.I /etc/ws/upload.conf
+JSON configuration file specifying upload actions and methods.
+.TP
+.I /var/log/ws-upload.log
+Standard output log file.
+.TP
+.I /var/log/ws-upload-error.log
+Error log file.
+.SH EXIT STATUS
+.TP
+.B 0
+Success
+.TP
+.B 1
+Already running
+.TP
+.B 2
+Config file missing or not readable
+.TP
+.B 11
+Incorrect filename pattern
+.SH SEE ALSO
+.BR ws-run-audio (1),
+.BR ws-run-sensors (1),
+.BR ws-heartbeat (1)
+.SH AUTHOR
+Ed Baker <ed@ebaker.me.uk>
+.SH COPYRIGHT
+Copyright \(co 2024-2026 Ed Baker.
+License GPLv2+: GNU GPL version 2 or later.

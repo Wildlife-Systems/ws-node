@@ -1,0 +1,33 @@
+.TH WS-RUN-AUDIO 1 "January 2026" "ws-node 1.4.1" "WildlifeSystems Commands"
+.SH NAME
+ws-run-audio \- run audio recording for WildlifeSystems
+.SH SYNOPSIS
+.B ws-run-audio
+.SH DESCRIPTION
+.B ws-run-audio
+manages audio recording sessions for WildlifeSystems nodes. It reads
+configuration from
+.I /etc/ws/audio.conf
+and controls the recording hardware and software.
+.PP
+This command is typically run by a systemd service (ws-audio.service) rather than
+invoked directly.
+.SH FILES
+.TP
+.I /etc/ws/audio.conf
+JSON configuration file for audio recording.
+.TP
+.I /var/log/ws-run-audio.log
+Standard output log file.
+.TP
+.I /var/log/ws-run-audio-error.log
+Error log file.
+.SH SEE ALSO
+.BR ws-upload (1),
+.BR ws-run-sensors (1),
+.BR ws-heartbeat (1)
+.SH AUTHOR
+Ed Baker <ed@ebaker.me.uk>
+.SH COPYRIGHT
+Copyright \(co 2024-2026 Ed Baker.
+License GPLv2+: GNU GPL version 2 or later.

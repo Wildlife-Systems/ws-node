@@ -4,7 +4,7 @@ Upstream-Contact: Ed Baker <ed@ebaker.me.uk>
 Source: https://github.com/WildlifeSystems/ws-node
 
 Files: *
-Copyright: 2024-2026 Natural History Museum / Ed Baker
+Copyright: 2024-2026 Ed Baker
 License: GPL-2+
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by

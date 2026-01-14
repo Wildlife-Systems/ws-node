@@ -1,0 +1,23 @@
+.TH WS-HEARTBEAT 1 "January 2026" "ws-node 1.4.1" "WildlifeSystems Commands"
+.SH NAME
+ws-heartbeat \- send heartbeat signal for WildlifeSystems node
+.SH SYNOPSIS
+.B ws-heartbeat
+.RI [ action ]
+.SH DESCRIPTION
+.B ws-heartbeat
+sends a heartbeat signal to indicate the WildlifeSystems node is operational.
+An optional action parameter can be provided to indicate the current activity.
+.SH ARGUMENTS
+.TP
+.I action
+Optional string describing the current action being performed.
+.SH SEE ALSO
+.BR ws-upload (1),
+.BR ws-run-audio (1),
+.BR ws-run-sensors (1)
+.SH AUTHOR
+Ed Baker <ed@ebaker.me.uk>
+.SH COPYRIGHT
+Copyright \(co 2024-2026 Ed Baker.
+License GPLv2+: GNU GPL version 2 or later.
