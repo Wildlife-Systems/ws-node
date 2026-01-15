@@ -60,6 +60,13 @@ do
 					;;
 	esac
 
+	# File to be created in /var/ws/audio
+	if [[ ! -d "/var/ws/audio" ]]; then
+		mkdir -p "/var/ws/audio"
+	fi
+
+	FN="/var/ws/audio/$FN"
+
 	# Create empty array to store filenames
 	FNARRAY=()
 
