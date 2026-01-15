@@ -1,3 +1,5 @@
 debian/.debhelper/*
 debian/ws-node/*
 debian/files
+debian/*.debhelper
+
