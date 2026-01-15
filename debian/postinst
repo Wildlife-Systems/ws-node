@@ -4,8 +4,6 @@ set -e
 
 case "$1" in
     configure)
-        echo "Configuring WildlifeSystems services..."
-        
         # Clean up old service file locations from previous versions
         for old_file in /etc/systemd/system/ws-audio.service \
                         /etc/systemd/system/ws-sensors.service \
@@ -25,8 +23,6 @@ case "$1" in
         
         # Reload systemd to pick up new service files
         systemctl daemon-reload
-        
-        echo "WildlifeSystems services configured successfully"
         ;;
         
     abort-upgrade|abort-remove|abort-deconfigure)
