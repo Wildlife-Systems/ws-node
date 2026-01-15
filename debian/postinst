@@ -10,7 +10,6 @@ chmod +x /usr/bin/ws-run-audio
 chmod +x /usr/bin/ws-run-sensors
 chmod +x /usr/bin/ws-network
 
-chown root:root /etc/sudoers.d/ws
 
 case "$1" in
     configure)
@@ -26,31 +25,6 @@ case "$1" in
         
         # Reload systemd to pick up new service files
         systemctl daemon-reload
-        
-        # Check if we have saved service states
-        if [[ -f /var/lib/ws-node/enabled-services.txt ]]; then
-            echo "Restoring previously enabled services..."
-            while IFS= read -r unit; do
-                if [[ -n "$unit" ]]; then
-                    echo "Enabling $unit"
-                    deb-systemd-helper enable "$unit" || true
-                fi
-            done < /var/lib/ws-node/enabled-services.txt
-        fi
-        
-        if [[ -f /var/lib/ws-node/active-services.txt ]]; then
-            echo "Restoring previously active services..."
-            while IFS= read -r unit; do
-                if [[ -n "$unit" ]]; then
-                    echo "Starting $unit"
-                    deb-systemd-invoke start "$unit" || true
-                fi
-            done < /var/lib/ws-node/active-services.txt
-        fi
-        
-        # Clean up state files after restore
-        rm -f /var/lib/ws-node/enabled-services.txt || true
-        rm -f /var/lib/ws-node/active-services.txt || true
         
         echo "WildlifeSystems services configured successfully"
         ;;
