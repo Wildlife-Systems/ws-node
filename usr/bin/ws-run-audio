@@ -8,7 +8,7 @@
 
 # Return codes
 #
-# Further information on WildlifeSystems standard reurn codes can be found
+# Further information on WildlifeSystems standard return codes can be found
 # at https://docs.wildlife.systems/return-codes.html
 # 0 - Success
 # 1 - Already running
@@ -72,14 +72,14 @@ do
 
 	N=$(echo "$CONFIG" | jq -r ".run | length")
 	I=0
-	while [ $I  -lt $N ];
+	while [ "$I" -lt "$N" ];
 	do
 		pi-pwr off $(echo "$CONFIG" | jq -r ".run[$I] .off[]" | tr '\n' ' ')
-  		pi-pwr on $(echo "$CONFIG" | jq -r ".run[$I] .on[]" | tr '\n' ' ')
-		ACTION=`echo $CONFIG| jq -r ".run[$I] .action"`
-		echo $ACTION
-		sudo ws-heartbeat $ACTION &
-        	case  $ACTION in
+		pi-pwr on $(echo "$CONFIG" | jq -r ".run[$I] .on[]" | tr '\n' ' ')
+		ACTION=$(echo "$CONFIG" | jq -r ".run[$I] .action")
+		echo "$ACTION"
+		sudo ws-heartbeat "$ACTION" &
+        	case  "$ACTION" in
 				record)
 					DURATION=$(echo "$CONFIG" | jq -r ".run[$I] .duration")
 					CHANNELS=$(echo "$CONFIG" | jq -r ".run[$I] .channels")
@@ -106,18 +106,18 @@ do
 
 					;;
 				 upload-delete)
-					METHOD=`echo $CONFIG| jq -r ".run[$I] .method"`
-					UPPATH=`echo $CONFIG| jq -r ".run[$I] .path"`
-					EXTENSION=`echo $CONFIG| jq -r ".run[$I] .extension"`
-					ASYNC=`echo $CONFIG| jq -r ".run[$I] .async"`
+					METHOD=$(echo "$CONFIG" | jq -r ".run[$I] .method")
+					UPPATH=$(echo "$CONFIG" | jq -r ".run[$I] .path")
+					EXTENSION=$(echo "$CONFIG" | jq -r ".run[$I] .extension")
+					ASYNC=$(echo "$CONFIG" | jq -r ".run[$I] .async")
 					case $METHOD in
 						s3cmd)
-							S3UP=`eval echo "s3cmd put $FN.$EXTENSION s3://$UPPATH"`
+							S3UP=$(eval echo "s3cmd put $FN.$EXTENSION s3://$UPPATH")
 							S3UP="$S3UP && rm $FN.$EXTENSION"
 							if [[ "$ASYNC" == "true" ]]; then
 								S3UP="( $S3UP )&";
 							fi
-							eval $S3UP
+							eval "$S3UP"
 							;;
 						mv)
 							MVUPPATH=$(eval "echo ${UPPATH}")
@@ -127,10 +127,10 @@ do
 											mkdir -p "$MVUPPATH"
 							fi
 
-							mv $FN.$EXTENSION $MVUPPATH &
+							mv "$FN.$EXTENSION" "$MVUPPATH" &
 							;;
 						script)
-							SCRIPT=`echo $CONFIG| jq -r ".run[$I] .script"`
+							SCRIPT=$(echo "$CONFIG" | jq -r ".run[$I] .script")
 							if [[ ! -x "$SCRIPT" ]]; then
 								echo "Script $SCRIPT not executable."
 							fi
@@ -139,7 +139,7 @@ do
 								# Check if the file exists
 								if [[ -f "$FILE" ]]; then
 									#Call the script with the file as an argument
-									$SCRIPT "$FILE" &
+									"$SCRIPT" "$FILE" &
 								else
 									echo "File $FILE not found."
 								fi
@@ -150,13 +150,13 @@ do
 					esac
 					;;
 				clearup)
-					METHOD=`echo $CONFIG| jq -r ".run[$I] .method"`
+					METHOD=$(echo "$CONFIG" | jq -r ".run[$I] .method")
 					case $METHOD in
 						script)
-							SCRIPT=`echo $CONFIG| jq -r ".run[$I] .script"`
+							SCRIPT=$(echo "$CONFIG" | jq -r ".run[$I] .script")
 							# Check if the script exists and is executable
 							if [[ -x "$SCRIPT" ]]; then
-									$SCRIPT &
+									"$SCRIPT" &
 							else
 									echo "Script $SCRIPT not found or not executable."
 							fi
@@ -171,8 +171,5 @@ do
 					;;
 			esac
 
-		I=$(($I + 1))
-		ws-indicate heartbeat
-	onOff
-	done
+		I=$((I + 1))
 done

@@ -1,27 +1,27 @@
 #!/bin/bash
 
-###DEBHELPER###
-
 set -e
-
-chmod +x /usr/bin/ws-indicate
-chmod +x /usr/bin/ws-heartbeat
-chmod +x /usr/bin/ws-run-audio
-chmod +x /usr/bin/ws-run-sensors
-chmod +x /usr/bin/ws-network
-
 
 case "$1" in
     configure)
         echo "Configuring WildlifeSystems services..."
         
         # Clean up old service file locations from previous versions
-        for old_file in /etc/systemd/system/ws-*.service /etc/systemd/system/ws-*.timer; do
+        for old_file in /etc/systemd/system/ws-audio.service \
+                        /etc/systemd/system/ws-sensors.service \
+                        /etc/systemd/system/ws-sensors.timer \
+                        /etc/systemd/system/ws-upload.service \
+                        /etc/systemd/system/ws-upload.timer; do
             if [ -f "$old_file" ]; then
                 echo "Removing old service file: $old_file"
                 rm -f "$old_file" || true
             fi
         done
+        
+        # Clean up legacy log files from previous versions (now using journald)
+        rm -f /var/log/ws-run-audio.log /var/log/ws-run-audio-error.log || true
+        rm -f /var/log/ws-run-sensors.log /var/log/ws-run-sensors-error.log || true
+        rm -f /var/log/ws-upload.log /var/log/ws-upload-error.log || true
         
         # Reload systemd to pick up new service files
         systemctl daemon-reload
@@ -39,5 +39,7 @@ case "$1" in
         exit 1
         ;;
 esac
+
+###DEBHELPER###
 
 exit 0

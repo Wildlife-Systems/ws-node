@@ -1,33 +1,16 @@
 #!/bin/bash
-# filepath: c:\Users\edwab\OneDrive - Natural History Museum\Documents\GitHub\ws-node\DEBIAN\postrm
 
 set -e
 
-###DEBHELPER###
-
 case "$1" in
     remove|purge)
-        echo "Cleaning up WildlifeSystems services..."
-        
-        # Remove service files if they still exist
-        for file in /lib/systemd/system/ws-*.service /lib/systemd/system/ws-*.timer; do
-            if [ -f "$file" ]; then
-                echo "Removing $file"
-                rm -f "$file" || true
-            fi
-        done
-        
         # Reload systemd
         systemctl daemon-reload || true
         
         if [ "$1" = "purge" ]; then
-            echo "Purging WildlifeSystems configuration and logs..."
+            echo "Purging WildlifeSystems configuration..."
             # Remove configuration files
             rm -rf /etc/ws/ || true
-            # Remove log files
-            rm -f /var/log/ws-*.log || true
-            # Remove state files
-            rm -rf /var/lib/ws-node/ || true
         fi
         ;;
         
@@ -40,5 +23,7 @@ case "$1" in
         exit 1
         ;;
 esac
+
+###DEBHELPER###
 
 exit 0

@@ -6,8 +6,8 @@ After=network.target
 Type=simple
 User=root
 ExecStart=/usr/bin/ws-run-audio
-StandardOutput=file:/var/log/ws-run-audio.log
-StandardError=file:/var/log/ws-run-audio-error.log
+StandardOutput=journal
+StandardError=journal
 Restart=on-failure
 
 [Install]
