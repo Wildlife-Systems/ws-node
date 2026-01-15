@@ -80,6 +80,11 @@ do
                                                         echo "Warning: No sensor data to write to $FILE."
                                                         continue
                                                 fi
+                                                FILE_DIR=$(dirname "$FILE")
+                                                if [[ ! -d "$FILE_DIR" ]]; then
+                                                        echo "Creating directory: $FILE_DIR"
+                                                        mkdir -p "$FILE_DIR"
+                                                fi
                                                 echo "Writing to file: $FILE"
                                                 echo "$SENSOR_DATA" >> $FILE
                                                 ;;
