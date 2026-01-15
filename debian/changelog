@@ -1,3 +1,9 @@
+ws-node (1.4.3) stable; urgency=medium
+
+  * Better file handling in ws-run-audio
+
+ -- Ed Baker <ed@ebaker.me.uk>  Thu, 15 Jan 2026 12:08:29 +0000
+
 ws-node (1.4.2) stable; urgency=medium
 
   * Remove setup script
