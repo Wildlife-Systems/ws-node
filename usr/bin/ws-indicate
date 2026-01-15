@@ -8,7 +8,7 @@
 
 # Return codes
 #
-# Further information on WildlifeSystems standard reurn codes can be found
+# Further information on WildlifeSystems standard return codes can be found
 # at https://docs.wildlife.systems/return-codes.html
 # 0 - Success
 # 10 - invalid argument
@@ -55,10 +55,10 @@ fi
 #Indicators
 case "$1" in
 	list)
-		echo $ATINIT
-		echo $ABINIT
-		echo $PTINIT
-		echo $PBINIT
+		echo "$ATINIT"
+		echo "$ABINIT"
+		echo "$PTINIT"
+		echo "$PBINIT"
 		exit 0
 		;;
 
@@ -101,24 +101,24 @@ esac
 
 #Restore initial state
 if [ -d /sys/class/leds/led0 ]; then
-  echo $ABINIT | sudo tee /sys/class/leds/led0/brightness >> /dev/null
-  echo $ATINIT | sudo tee /sys/class/leds/led0/trigger >> /dev/null
+  echo "$ABINIT" | sudo tee /sys/class/leds/led0/brightness >> /dev/null
+  echo "$ATINIT" | sudo tee /sys/class/leds/led0/trigger >> /dev/null
 else
   if [ -d /sys/class/leds/ACT ]; then
-	echo $ABINIT | sudo tee /sys/class/leds/ACT/brightness >> /dev/null
-	echo $ATINIT | sudo tee /sys/class/leds/ACT/trigger >> /dev/null
+	echo "$ABINIT" | sudo tee /sys/class/leds/ACT/brightness >> /dev/null
+	echo "$ATINIT" | sudo tee /sys/class/leds/ACT/trigger >> /dev/null
   fi
 fi
 
 
 if [[ "$MODEL" != "000d" ]]; then
   if [ -d /sys/class/leds/led1 ]; then
-	echo $PBINIT | sudo tee /sys/class/leds/led1/brightness >> /dev/null
-	echo $PTINIT | sudo tee /sys/class/leds/led1/trigger >> /dev/null
+	echo "$PBINIT" | sudo tee /sys/class/leds/led1/brightness >> /dev/null
+	echo "$PTINIT" | sudo tee /sys/class/leds/led1/trigger >> /dev/null
   else
 	if [ -d /sys/class/leds/PWR ]; then
-	  echo $PBINIT | sudo tee /sys/class/leds/PWR/brightness >> /dev/null
-	  echo $PTINIT | sudo tee /sys/class/leds/PWR/trigger >> /dev/null
+	  echo "$PBINIT" | sudo tee /sys/class/leds/PWR/brightness >> /dev/null
+	  echo "$PTINIT" | sudo tee /sys/class/leds/PWR/trigger >> /dev/null
 	fi
   fi
 fi

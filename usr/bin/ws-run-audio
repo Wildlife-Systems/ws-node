@@ -172,4 +172,7 @@ do
 			esac
 
 		I=$((I + 1))
+		ws-indicate heartbeat
+		onOff
+	done
 done
