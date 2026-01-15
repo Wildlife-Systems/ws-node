@@ -39,7 +39,6 @@ if [[ -z "$CONFIG" ]]; then
   exit 2
 fi
 
-COUNTDOWN=5
 FNTYPE=$(echo "$CONFIG" | jq -r '.init .filenaming')
 
 function onOff {
