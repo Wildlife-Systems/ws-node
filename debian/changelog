@@ -1,3 +1,10 @@
+ws-node (1.4.2) stable; urgency=medium
+
+  * Remove setup script
+  * Better file handiling in ws-run-sensors 
+
+ -- Ed Baker <ed@ebaker.me.uk>  Thu, 15 Jan 2026 11:22:16 +0000
+
 ws-node (1.4.1) stable; urgency=medium
 
   * ws-upload enhancements
