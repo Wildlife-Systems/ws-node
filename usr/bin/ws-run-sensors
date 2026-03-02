@@ -57,11 +57,37 @@ do
         #ws-heartbeat $ACTION
         case  "$ACTION" in
                         sensor_read)
+                                echo "Warning: 'sensor_read' is deprecated, use 'sensor-read' instead." 1>&2
+                                ;&
+                        sensor-read)
                                 SENSOR=$(echo "$CONFIG" | jq -r ".run[$I] .sensor")
                                 SENSOR_TYPE=$(echo "$CONFIG" | jq -r ".run[$I] .sensor_type")
 
                                 SENSOR_DATA=$(sr "$SENSOR" "$SENSOR_TYPE")
                                 echo "$SENSOR_DATA"
+                                ;;
+                        process-data)
+                                SCRIPT=$(echo "$CONFIG" | jq -r ".run[$I] .script // empty")
+                                if [[ -n "$SCRIPT" ]]; then
+                                        if [[ ! -x "$SCRIPT" ]]; then
+                                                echo "Error: process-data script $SCRIPT not found or not executable."
+                                                continue
+                                        fi
+                                        if [[ -n "$SENSOR_DATA" ]]; then
+                                                OUTPUT=$("$SCRIPT" <<< "$SENSOR_DATA" 2>&1)
+                                                EXIT=$?
+                                                if [[ $EXIT -ne 0 ]]; then
+                                                        echo "process-data script $SCRIPT failed (exit $EXIT): $OUTPUT"
+                                                else
+                                                        SENSOR_DATA="$OUTPUT"
+                                                        echo "$SENSOR_DATA"
+                                                fi
+                                        else
+                                                echo "Warning: No sensor data to process."
+                                        fi
+                                else
+                                        echo "No process-data script specified, passing data through."
+                                fi
                                 ;;
                         sleep)
                                 DURATION=$(echo "$CONFIG" | jq -r ".run[$I] .duration")

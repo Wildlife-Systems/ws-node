@@ -12,6 +12,45 @@ and manages sensor hardware interfaces.
 .PP
 This command is typically run by a systemd timer (ws-sensors.timer) rather than
 invoked directly.
+.SH ACTIONS
+The following actions can be configured in the
+.I run
+array of the configuration file:
+.TP
+.B sensor-read
+Read data from a sensor. Requires
+.I sensor
+and
+.I sensor_type
+fields. The result is stored internally for use by subsequent actions.
+The deprecated name
+.B sensor_read
+is still accepted but will emit a warning.
+.TP
+.B process-data
+Process the most recent sensor data. If a
+.I script
+field is provided, the sensor data is piped through the script and the result
+replaces the stored sensor data. If no script is specified, the data is passed
+through unchanged. This action is typically placed between
+.B sensor-read
+and
+.B upload-delete
+to transform or enrich data before output.
+.TP
+.B sleep
+Pause execution for the number of seconds given by the
+.I duration
+field.
+.TP
+.B upload-delete
+Output the stored sensor data using the specified
+.I method
+(either
+.B file
+or
+.B script
+).
 .SH FILES
 .TP
 .I /etc/ws/sensors.conf
