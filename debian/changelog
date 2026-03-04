@@ -1,3 +1,9 @@
+ws-node (1.4.4) stable; urgency=medium
+
+  * process-data in sensor script
+
+ -- Ed Baker <ed@ebaker.me.uk>  Mon, 02 Mar 2026 16:49:47 +0000
+
 ws-node (1.4.3) stable; urgency=medium
 
   * Better file handling in ws-run-audio
