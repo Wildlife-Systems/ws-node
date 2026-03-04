@@ -54,7 +54,7 @@ do
         pi-pwr on $(echo "$CONFIG" | jq -r ".run[$I] .on[]" | tr '\n' ' ')
         ACTION=$(echo "$CONFIG" | jq -r ".run[$I] .action")
         echo "$ACTION"
-        #ws-heartbeat $ACTION
+        ws-heartbeat "$ACTION" &
         case  "$ACTION" in
                         sensor_read)
                                 echo "Warning: 'sensor_read' is deprecated, use 'sensor-read' instead." 1>&2
@@ -141,5 +141,7 @@ do
         #ws-indicate heartbeat
         onOff
 done
+
+wait
 
 exit 0
