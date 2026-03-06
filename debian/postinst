@@ -5,8 +5,7 @@ set -e
 case "$1" in
     configure)
         # Clean up old service file locations from previous versions
-        for old_file in /etc/systemd/system/ws-audio.service \
-                        /etc/systemd/system/ws-sensors.service \
+        for old_file in /etc/systemd/system/ws-sensors.service \
                         /etc/systemd/system/ws-sensors.timer \
                         /etc/systemd/system/ws-upload.service \
                         /etc/systemd/system/ws-upload.timer; do
@@ -17,7 +16,6 @@ case "$1" in
         done
         
         # Clean up legacy log files from previous versions (now using journald)
-        rm -f /var/log/ws-run-audio.log /var/log/ws-run-audio-error.log || true
         rm -f /var/log/ws-run-sensors.log /var/log/ws-run-sensors-error.log || true
         rm -f /var/log/ws-upload.log /var/log/ws-upload-error.log || true
         
