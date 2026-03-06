@@ -1,3 +1,9 @@
+ws-node (1.4.6) stable; urgency=medium
+
+  * ws-run-audio removed
+
+ -- Ed Baker <ed@ebaker.me.uk>  Fri, 06 Mar 2026 16:38:31 +0000
+
 ws-node (1.4.5) stable; urgency=medium
 
   * ws-heartbeat called from ws-upload as ws-run-sensors
