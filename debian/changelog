@@ -1,3 +1,9 @@
+ws-node (1.4.5) stable; urgency=medium
+
+  * ws-heartbeat called from ws-upload as ws-run-sensors
+
+ -- Ed Baker <ed@ebaker.me.uk>  Wed, 04 Mar 2026 17:32:37 +0000
+
 ws-node (1.4.4) stable; urgency=medium
 
   * process-data in sensor script
