@@ -20,10 +20,35 @@ if [[ -f "$WSTOKEN_PATH" ]]; then
   SERIAL=$(pi-data serial)
   HNAME=$(pi-data hostname)
   HB=$(sr onboard)
-  MACADDR=$(<"/sys/class/net/eth0/address")
-  ACTION=$(curl -s --data \
-    "token=$TOKEN&node_id=$SERIAL&status=$STATUS&hostname=$HNAME&heartbeat=$HB&mac=$MACADDR" \
+  DEFAULT_IFACE=$(ip route show default | awk '{print $5; exit}')
+  if [[ -n "$DEFAULT_IFACE" && -f "/sys/class/net/$DEFAULT_IFACE/address" ]]; then
+    MACADDR=$(<"/sys/class/net/$DEFAULT_IFACE/address")
+  else
+    MACADDR="unknown"
+  fi
+  NET_STATS_FILE="/var/ws/local-net-stats.jsonl"
+  if [[ -f "$NET_STATS_FILE" ]]; then
+    LAST_LINE=$(tail -n 1 "$NET_STATS_FILE")
+    PERCENT_DROPPED=$(echo "$LAST_LINE" | sed -n 's/.*"percent_dropped":\([^,}]*\).*/\1/p')
+    MEAN_MS=$(echo "$LAST_LINE" | sed -n 's/.*"mean_ms":\([^,}]*\).*/\1/p')
+    JITTER_MS=$(echo "$LAST_LINE" | sed -n 's/.*"jitter_ms":\([^,}]*\).*/\1/p')
+  else
+    PERCENT_DROPPED=""
+    MEAN_MS=""
+    JITTER_MS=""
+  fi
+  HTTP_CODE=$(curl -s -o /dev/null -w '%{http_code}' --data \
+    "token=$TOKEN&node_id=$SERIAL&status=$STATUS&hostname=$HNAME&heartbeat=$HB&mac=$MACADDR&percent_dropped=$PERCENT_DROPPED&mean_ms=$MEAN_MS&jitter_ms=$JITTER_MS" \
     https://devices.wildlife.systems/heartbeat/index.php)
+  CURL_EXIT=$?
+  if [[ $CURL_EXIT -ne 0 ]]; then
+    echo "Heartbeat failed: curl error $CURL_EXIT"
+    exit 1
+  fi
+  if [[ "$HTTP_CODE" -lt 200 || "$HTTP_CODE" -ge 300 ]]; then
+    echo "Heartbeat failed: HTTP $HTTP_CODE"
+    exit 1
+  fi
 else
   echo "No token."
   exit 2
