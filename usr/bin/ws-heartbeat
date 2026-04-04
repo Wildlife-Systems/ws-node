@@ -26,7 +26,7 @@ if [[ -f "$WSTOKEN_PATH" ]]; then
   else
     MACADDR="unknown"
   fi
-  NET_STATS_FILE="/var/ws/local-net-stats.jsonl"
+  NET_STATS_FILE="/var/pi-data/local-net-stats.jsonl"
   if [[ -f "$NET_STATS_FILE" ]]; then
     LAST_LINE=$(tail -n 1 "$NET_STATS_FILE")
     PERCENT_DROPPED=$(echo "$LAST_LINE" | sed -n 's/.*"percent_dropped":\([^,}]*\).*/\1/p')
