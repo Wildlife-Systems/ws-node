@@ -1,3 +1,9 @@
+ws-node (1.4.7) stable; urgency=medium
+
+  * Add local network stats to heartbeat
+
+ -- Ed Baker <ed@ebaker.me.uk>  Sat, 04 Apr 2026 12:45:08 +0000
+
 ws-node (1.4.6) stable; urgency=medium
 
   * ws-run-audio removed
