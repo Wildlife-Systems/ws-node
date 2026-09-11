@@ -1,0 +1,167 @@
+#!/usr/bin/env bash
+#
+# WildlifeSystems - Geolocate
+#
+# This script is used to interactively view and edit /etc/geolocation, the
+# GeoClue static location source.
+#
+# This script is part of the WildlifeSystems project. For further information
+# please refer to https://docs.wildlife.systems, or for more information on
+# the project itself, please refer to https://wildlife.systems.
+#
+# Return codes
+#
+# Further information on WildlifeSystems standard return codes can be found
+# at https://docs.wildlife.systems/return-codes.html
+# 0 - Success
+# 1 - Error
+# 10 - invalid argument
+#
+# Env overrides (for testing): GEOLOC_FILE, GEOCLUE_CONF, GEOLOC_NO_ROOT=1
+
+set -euo pipefail
+
+PROG="${0##*/}"
+GEOLOC_FILE="${GEOLOC_FILE:-/etc/geolocation}"
+GEOCLUE_CONF="${GEOCLUE_CONF:-/etc/geoclue/geoclue.conf}"
+SHOW_ONLY=0
+
+# Built from $PROG so the help stays correct whatever the script is installed as.
+usage() {
+  cat <<EOF
+Usage:
+  sudo $PROG            # interactive edit
+  sudo $PROG --show     # print current values and exit
+  sudo $PROG --file P   # operate on P instead of /etc/geolocation
+
+The file is four newline-separated floats: latitude, longitude, altitude (m),
+accuracy radius (m). See geoclue(5), section [static-source].
+EOF
+}
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --show) SHOW_ONLY=1; shift ;;
+    --file) GEOLOC_FILE="${2:?--file needs a path}"; shift 2 ;;
+    -h|--help) usage; exit 0 ;;
+    *) printf 'Unknown option: %s (try --help)\n' "$1" >&2; usage >&2; exit 10 ;;
+  esac
+done
+
+die() { printf 'Error: %s\n' "$*" >&2; exit 1; }
+
+is_number() { [[ $1 =~ ^[+-]?([0-9]+(\.[0-9]*)?|\.[0-9]+)$ ]]; }
+
+# Float comparison without bc.
+in_range() { awk -v v="$1" -v lo="$2" -v hi="$3" 'BEGIN { exit !(v >= lo && v <= hi) }'; }
+
+if [[ ${GEOLOC_NO_ROOT:-0} != 1 && $EUID -ne 0 ]]; then
+  command -v sudo >/dev/null 2>&1 || die "must be run as root to write $GEOLOC_FILE"
+  # NB: ${SHOW_ONLY:+--show} would expand for the string "0" too - it tests for
+  # emptiness, not truth. Build the argument list explicitly instead.
+  reargs=(--file "$GEOLOC_FILE")
+  if (( SHOW_ONLY )); then reargs+=(--show); fi
+  exec sudo -E "$0" "${reargs[@]}"
+fi
+
+# --- current values: strip comments and blanks, trim whitespace -------------
+CUR=()
+if [[ -r $GEOLOC_FILE ]]; then
+  mapfile -t CUR < <(sed -e 's/#.*//' -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' \
+                         -e '/^$/d' "$GEOLOC_FILE")
+  (( ${#CUR[@]} == 0 || ${#CUR[@]} == 4 )) ||
+    printf 'Warning: %s has %d value lines; GeoClue expects 4.\n' "$GEOLOC_FILE" "${#CUR[@]}" >&2
+fi
+
+# Only offer an existing value as a default if it is actually a number.
+cur_or() {
+  local i=$1 fallback=$2
+  local v                    # separate statement: in `local a=$1 b=${X[$a]}`
+  v=${CUR[$i]:-}             # bash localises both names before expanding the RHS
+  if [[ -n $v ]] && is_number "$v"; then printf '%s' "$v"; else printf '%s' "$fallback"; fi
+}
+
+if (( SHOW_ONLY )); then
+  (( ${#CUR[@]} )) || die "no location set ($GEOLOC_FILE is absent or empty)"
+  printf 'latitude   %s\nlongitude  %s\naltitude   %s m\naccuracy   %s m\n' \
+    "$(cur_or 0 '?')" "$(cur_or 1 '?')" "$(cur_or 2 '?')" "$(cur_or 3 '?')"
+  exit 0
+fi
+
+# --- prompt ------------------------------------------------------------------
+[[ -t 0 ]] || die "not a terminal; this is interactive (use --show to read)"
+
+# ask LABEL UNIT DEFAULT MIN MAX -> echoes accepted value (errors go to stderr)
+ask() {
+  local label=$1 unit=$2 default=$3 lo=$4 hi=$5 ans prompt
+  while :; do
+    prompt="$label ($unit)"
+    [[ -n $default ]] && prompt+=" [$default]"
+    read -r -p "$prompt: " ans || die "input closed"
+    ans=${ans//[[:space:]]/}
+    [[ -z $ans && -n $default ]] && ans=$default
+    if ! is_number "$ans"; then
+      echo "  not a number" >&2; continue
+    fi
+    if ! in_range "$ans" "$lo" "$hi"; then
+      echo "  must be between $lo and $hi" >&2; continue
+    fi
+    printf '%s' "$ans"; return 0
+  done
+}
+
+echo "Editing $GEOLOC_FILE"
+(( ${#CUR[@]} >= 4 )) && echo "Press Enter to keep the value in brackets."
+echo
+
+LAT=$(ask 'Latitude ' 'deg, + north / - south' "$(cur_or 0 '')"   -90     90)
+LON=$(ask 'Longitude' 'deg, + east / - west'   "$(cur_or 1 '')"   -180    180)
+ALT=$(ask 'Altitude ' 'metres'                 "$(cur_or 2 0)"    -500    9000)
+# Accuracy is a confidence radius, so "unknown" just means "use a big number":
+# ~100 m a house, ~5000 m a village, ~25000 m a city, ~100000 m a region.
+ACC=$(ask 'Accuracy ' 'metres radius, larger if unsure' "$(cur_or 3 1000)" 1 1000000)
+
+printf '\n%s, %s   alt %s m   +/- %s m\n' "$LAT" "$LON" "$ALT" "$ACC"
+read -r -p "Write to $GEOLOC_FILE? [y/N] " confirm
+[[ ${confirm,,} == y* ]] || { echo "Aborted; nothing changed."; exit 1; }
+
+# --- write -------------------------------------------------------------------
+if [[ -e $GEOLOC_FILE ]]; then
+  backup="$GEOLOC_FILE.bak.$(date +%Y%m%d%H%M%S)"
+  cp -p -- "$GEOLOC_FILE" "$backup"
+  echo "Backed up to $backup"
+fi
+
+# Temp file in the same directory so the final rename is atomic.
+tmp=$(mktemp "$GEOLOC_FILE.XXXXXX")
+trap 'rm -f -- "$tmp"' EXIT
+
+cat >"$tmp" <<EOF
+# GeoClue static source - see geoclue(5), [static-source]
+$LAT	# latitude  (+N / -S)
+$LON	# longitude (+E / -W)
+$ALT	# altitude, metres
+$ACC	# accuracy radius, metres
+EOF
+
+chmod 600 "$tmp"
+getent passwd geoclue >/dev/null 2>&1 && chown geoclue "$tmp"
+mv -f -- "$tmp" "$GEOLOC_FILE"
+trap - EXIT
+echo "Wrote $GEOLOC_FILE"
+
+# The file is inert unless the static source is switched on.
+if [[ -r $GEOCLUE_CONF ]] && ! awk '
+      /^[[:space:]]*\[/ { in_s = ($0 ~ /^[[:space:]]*\[static-source\]/) }
+      in_s && /^[[:space:]]*enable[[:space:]]*=[[:space:]]*true/ { found = 1 }
+      END { exit !found }' "$GEOCLUE_CONF"; then
+  cat >&2 <<EOF
+
+Note: GeoClue will ignore this file until $GEOCLUE_CONF contains:
+
+    [static-source]
+    enable=true
+
+Then: systemctl restart geoclue
+EOF
+fi
