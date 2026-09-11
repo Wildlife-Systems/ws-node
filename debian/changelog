@@ -1,6 +1,7 @@
 ws-node (1.4.8) stable; urgency=medium
 
   * Add ws-geoloc for viewing and editing the static geolocation
+  * Add ws-geoloc(1) man page
 
  -- Ed Baker <ed@ebaker.me.uk>  Fri, 11 Sep 2026 13:03:57 +0000
 

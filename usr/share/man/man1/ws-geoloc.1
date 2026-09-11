@@ -1,0 +1,106 @@
+.TH WS-GEOLOC 1 "September 2026" "ws-node 1.4.8" "WildlifeSystems Commands"
+.SH NAME
+ws-geoloc \- view and edit the static geolocation of a WildlifeSystems node
+.SH SYNOPSIS
+.B ws-geoloc
+.RB [ \-\-file
+.IR path ]
+.br
+.B ws-geoloc \-\-show
+.RB [ \-\-file
+.IR path ]
+.SH DESCRIPTION
+.B ws-geoloc
+interactively edits
+.IR /etc/geolocation ,
+the GeoClue static location source. This gives a node a fixed position when no
+other location source (GPS, WiFi, or modem) is available, which is the usual
+case for a deployed WildlifeSystems node.
+.PP
+The file holds four newline\-separated floats: latitude, longitude, altitude in
+metres, and an accuracy radius in metres. See
+.BR geoclue (5),
+section
+.BR [static\-source] .
+.PP
+Without arguments the command prompts for each value in turn. Current values,
+if any, are offered as defaults and kept by pressing Enter. Each entry is
+checked for being a number and for being in range: latitude \-90 to 90,
+longitude \-180 to 180, altitude \-500 to 9000, accuracy 1 to 1000000. Accuracy
+is a confidence radius, so an unknown position is expressed as a large number:
+roughly 100 m for a house, 5000 m a village, 25000 m a city, 100000 m a region.
+.PP
+Nothing is written until the summary is confirmed. An existing file is copied
+to a timestamped
+.I .bak
+file first, and the new contents are written to a temporary file in the same
+directory and renamed into place, so the geolocation file is never left
+half\-written. Root is required to write it;
+.B ws-geoloc
+re\-executes itself under
+.BR sudo (8)
+if it is not already running as root.
+.PP
+The file is inert unless the static source is enabled in
+.IR /etc/geoclue/geoclue.conf .
+If it is not,
+.B ws-geoloc
+says so after writing.
+.SH OPTIONS
+.TP
+.B \-\-show
+Print the current values and exit. Does not prompt.
+.TP
+.BI \-\-file " path"
+Operate on
+.I path
+instead of
+.IR /etc/geolocation .
+.TP
+.BR \-h ", " \-\-help
+Print usage and exit.
+.SH FILES
+.TP
+.I /etc/geolocation
+The GeoClue static source: latitude, longitude, altitude, accuracy radius.
+.TP
+.I /etc/geoclue/geoclue.conf
+GeoClue configuration. The
+.B [static\-source]
+section must contain
+.B enable=true
+for the geolocation file to be used.
+.SH ENVIRONMENT
+.TP
+.B GEOLOC_FILE
+Overrides the default geolocation file path.
+.TP
+.B GEOCLUE_CONF
+Overrides the default GeoClue configuration path.
+.TP
+.B GEOLOC_NO_ROOT
+When set to 1, skips the root check and the re\-execution under
+.BR sudo (8).
+Intended for testing.
+.SH EXIT STATUS
+.TP
+.B 0
+Success
+.TP
+.B 1
+Error
+.TP
+.B 3
+The geolocation file is missing or malformed
+.TP
+.B 10
+Invalid argument
+.SH SEE ALSO
+.BR geoclue (5),
+.BR ws-heartbeat (1),
+.BR ws-indicate (1)
+.SH AUTHOR
+Ed Baker <ed@ebaker.me.uk>
+.SH COPYRIGHT
+Copyright \(co 2024\-2026 Ed Baker.
+License GPLv2+: GNU GPL version 2 or later.

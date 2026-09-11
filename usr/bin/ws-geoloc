@@ -15,6 +15,7 @@
 # at https://docs.wildlife.systems/return-codes.html
 # 0 - Success
 # 1 - Error
+# 3 - The geolocation file is missing or malformed
 # 10 - invalid argument
 #
 # Env overrides (for testing): GEOLOC_FILE, GEOCLUE_CONF, GEOLOC_NO_ROOT=1
@@ -42,13 +43,14 @@ EOF
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --show) SHOW_ONLY=1; shift ;;
-    --file) GEOLOC_FILE="${2:?--file needs a path}"; shift 2 ;;
+    --file) [[ $# -ge 2 ]] || { printf 'Error: --file needs a path\n' >&2; exit 10; }
+            GEOLOC_FILE="$2"; shift 2 ;;
     -h|--help) usage; exit 0 ;;
     *) printf 'Unknown option: %s (try --help)\n' "$1" >&2; usage >&2; exit 10 ;;
   esac
 done
 
-die() { printf 'Error: %s\n' "$*" >&2; exit 1; }
+die() { local code=$1; shift; printf 'Error: %s\n' "$*" >&2; exit "$code"; }
 
 is_number() { [[ $1 =~ ^[+-]?([0-9]+(\.[0-9]*)?|\.[0-9]+)$ ]]; }
 
@@ -56,7 +58,7 @@ is_number() { [[ $1 =~ ^[+-]?([0-9]+(\.[0-9]*)?|\.[0-9]+)$ ]]; }
 in_range() { awk -v v="$1" -v lo="$2" -v hi="$3" 'BEGIN { exit !(v >= lo && v <= hi) }'; }
 
 if [[ ${GEOLOC_NO_ROOT:-0} != 1 && $EUID -ne 0 ]]; then
-  command -v sudo >/dev/null 2>&1 || die "must be run as root to write $GEOLOC_FILE"
+  command -v sudo >/dev/null 2>&1 || die 1 "must be run as root to write $GEOLOC_FILE"
   # NB: ${SHOW_ONLY:+--show} would expand for the string "0" too - it tests for
   # emptiness, not truth. Build the argument list explicitly instead.
   reargs=(--file "$GEOLOC_FILE")
@@ -82,14 +84,14 @@ cur_or() {
 }
 
 if (( SHOW_ONLY )); then
-  (( ${#CUR[@]} )) || die "no location set ($GEOLOC_FILE is absent or empty)"
+  (( ${#CUR[@]} )) || die 3 "no location set ($GEOLOC_FILE is absent or empty)"
   printf 'latitude   %s\nlongitude  %s\naltitude   %s m\naccuracy   %s m\n' \
     "$(cur_or 0 '?')" "$(cur_or 1 '?')" "$(cur_or 2 '?')" "$(cur_or 3 '?')"
   exit 0
 fi
 
 # --- prompt ------------------------------------------------------------------
-[[ -t 0 ]] || die "not a terminal; this is interactive (use --show to read)"
+[[ -t 0 ]] || die 1 "not a terminal; this is interactive (use --show to read)"
 
 # ask LABEL UNIT DEFAULT MIN MAX -> echoes accepted value (errors go to stderr)
 ask() {
@@ -97,7 +99,7 @@ ask() {
   while :; do
     prompt="$label ($unit)"
     [[ -n $default ]] && prompt+=" [$default]"
-    read -r -p "$prompt: " ans || die "input closed"
+    read -r -p "$prompt: " ans || die 1 "input closed"
     ans=${ans//[[:space:]]/}
     [[ -z $ans && -n $default ]] && ans=$default
     if ! is_number "$ans"; then
