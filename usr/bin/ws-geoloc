@@ -2,8 +2,8 @@
 #
 # WildlifeSystems - Geolocate
 #
-# This script is used to interactively view and edit /etc/geolocation, the
-# GeoClue static location source.
+# This script is used to view and edit /etc/geolocation, the GeoClue static
+# location source, either interactively or from the command line.
 #
 # This script is part of the WildlifeSystems project. For further information
 # please refer to https://docs.wildlife.systems, or for more information on
@@ -27,28 +27,33 @@ GEOLOC_FILE="${GEOLOC_FILE:-/etc/geolocation}"
 GEOCLUE_CONF="${GEOCLUE_CONF:-/etc/geoclue/geoclue.conf}"
 SHOW_ONLY=0
 
+# Set by --lat/--lon/--alt/--acc; any one of them means "do not prompt".
+LAT_ARG=""
+LON_ARG=""
+ALT_ARG=""
+ACC_ARG=""
+BATCH=0
+
 # Built from $PROG so the help stays correct whatever the script is installed as.
 usage() {
   cat <<EOF
 Usage:
-  sudo $PROG            # interactive edit
-  sudo $PROG --show     # print current values and exit
-  sudo $PROG --file P   # operate on P instead of /etc/geolocation
+  sudo $PROG                    # interactive edit
+  sudo $PROG --lat X --lon Y    # set values without prompting
+  sudo $PROG --show             # print current values and exit
+  sudo $PROG --file P           # operate on P instead of /etc/geolocation
+
+Value options, given as "--opt V" or "--opt=V". Any of them switches off
+prompting; values not given keep whatever is already in the file:
+  --lat, --latitude   degrees, -90 to 90 (+ north / - south)
+  --lon, --longitude  degrees, -180 to 180 (+ east / - west)
+  --alt, --altitude   metres, -500 to 9000 (default 0)
+  --acc, --accuracy   accuracy radius in metres, 1 to 1000000 (default 1000)
 
 The file is four newline-separated floats: latitude, longitude, altitude (m),
 accuracy radius (m). See geoclue(5), section [static-source].
 EOF
 }
-
-while [[ $# -gt 0 ]]; do
-  case "$1" in
-    --show) SHOW_ONLY=1; shift ;;
-    --file) [[ $# -ge 2 ]] || { printf 'Error: --file needs a path\n' >&2; exit 10; }
-            GEOLOC_FILE="$2"; shift 2 ;;
-    -h|--help) usage; exit 0 ;;
-    *) printf 'Unknown option: %s (try --help)\n' "$1" >&2; usage >&2; exit 10 ;;
-  esac
-done
 
 die() { local code=$1; shift; printf 'Error: %s\n' "$*" >&2; exit "$code"; }
 
@@ -57,12 +62,55 @@ is_number() { [[ $1 =~ ^[+-]?([0-9]+(\.[0-9]*)?|\.[0-9]+)$ ]]; }
 # Float comparison without bc.
 in_range() { awk -v v="$1" -v lo="$2" -v hi="$3" 'BEGIN { exit !(v >= lo && v <= hi) }'; }
 
+# check_value OPTION VALUE MIN MAX - exits rather than returning, so a bad
+# argument is rejected before sudo, prompting, or any writing happens.
+check_value() {
+  local opt=$1 v=$2 lo=$3 hi=$4
+  is_number "$v" || die 10 "$opt: not a number: $v"
+  in_range "$v" "$lo" "$hi" || die 10 "$opt: must be between $lo and $hi: $v"
+}
+
+while [[ $# -gt 0 ]]; do
+  # Accept --opt=value as well as --opt value: split the argument first, then
+  # let each case decide whether it still needs to consume the next one.
+  opt=${1%%=*}
+  if [[ $1 == *=* ]]; then val=${1#*=}; nshift=1; else val=""; nshift=2; fi
+  case "$opt" in
+    --file|--lat|--latitude|--lon|--longitude|--alt|--altitude|--acc|--accuracy)
+      if (( nshift == 2 )); then
+        [[ $# -ge 2 ]] || die 10 "$opt needs a value"
+        val=$2
+      fi ;;
+  esac
+  case "$opt" in
+    --show) SHOW_ONLY=1; shift ;;
+    --file) GEOLOC_FILE="$val"; shift "$nshift" ;;
+    --lat|--latitude)   LAT_ARG="$val"; BATCH=1; shift "$nshift" ;;
+    --lon|--longitude)  LON_ARG="$val"; BATCH=1; shift "$nshift" ;;
+    --alt|--altitude)   ALT_ARG="$val"; BATCH=1; shift "$nshift" ;;
+    --acc|--accuracy)   ACC_ARG="$val"; BATCH=1; shift "$nshift" ;;
+    -h|--help) usage; exit 0 ;;
+    *) printf 'Unknown option: %s (try --help)\n' "$1" >&2; usage >&2; exit 10 ;;
+  esac
+done
+
+(( SHOW_ONLY && BATCH )) && die 10 "--show cannot be combined with --lat/--lon/--alt/--acc"
+
+[[ -n $LAT_ARG ]] && check_value --lat "$LAT_ARG" -90 90
+[[ -n $LON_ARG ]] && check_value --lon "$LON_ARG" -180 180
+[[ -n $ALT_ARG ]] && check_value --alt "$ALT_ARG" -500 9000
+[[ -n $ACC_ARG ]] && check_value --acc "$ACC_ARG" 1 1000000
+
 if [[ ${GEOLOC_NO_ROOT:-0} != 1 && $EUID -ne 0 ]]; then
   command -v sudo >/dev/null 2>&1 || die 1 "must be run as root to write $GEOLOC_FILE"
   # NB: ${SHOW_ONLY:+--show} would expand for the string "0" too - it tests for
   # emptiness, not truth. Build the argument list explicitly instead.
   reargs=(--file "$GEOLOC_FILE")
   if (( SHOW_ONLY )); then reargs+=(--show); fi
+  [[ -n $LAT_ARG ]] && reargs+=(--lat "$LAT_ARG")
+  [[ -n $LON_ARG ]] && reargs+=(--lon "$LON_ARG")
+  [[ -n $ALT_ARG ]] && reargs+=(--alt "$ALT_ARG")
+  [[ -n $ACC_ARG ]] && reargs+=(--acc "$ACC_ARG")
   exec sudo -E "$0" "${reargs[@]}"
 fi
 
@@ -90,8 +138,71 @@ if (( SHOW_ONLY )); then
   exit 0
 fi
 
+# --- write -------------------------------------------------------------------
+# write_geoloc LAT LON ALT ACC
+write_geoloc() {
+  local lat=$1 lon=$2 alt=$3 acc=$4
+  local backup tmp
+
+  if [[ -e $GEOLOC_FILE ]]; then
+    backup="$GEOLOC_FILE.bak.$(date +%Y%m%d%H%M%S)"
+    cp -p -- "$GEOLOC_FILE" "$backup"
+    echo "Backed up to $backup"
+  fi
+
+  # Temp file in the same directory so the final rename is atomic.
+  tmp=$(mktemp "$GEOLOC_FILE.XXXXXX")
+  trap 'rm -f -- "$tmp"' EXIT
+
+  cat >"$tmp" <<EOF
+# GeoClue static source - see geoclue(5), [static-source]
+$lat	# latitude  (+N / -S)
+$lon	# longitude (+E / -W)
+$alt	# altitude, metres
+$acc	# accuracy radius, metres
+EOF
+
+  chmod 600 "$tmp"
+  getent passwd geoclue >/dev/null 2>&1 && chown geoclue "$tmp"
+  mv -f -- "$tmp" "$GEOLOC_FILE"
+  trap - EXIT
+  echo "Wrote $GEOLOC_FILE"
+
+  # The file is inert unless the static source is switched on.
+  if [[ -r $GEOCLUE_CONF ]] && ! awk '
+        /^[[:space:]]*\[/ { in_s = ($0 ~ /^[[:space:]]*\[static-source\]/) }
+        in_s && /^[[:space:]]*enable[[:space:]]*=[[:space:]]*true/ { found = 1 }
+        END { exit !found }' "$GEOCLUE_CONF"; then
+    cat >&2 <<EOF
+
+Note: GeoClue will ignore this file until $GEOCLUE_CONF contains:
+
+    [static-source]
+    enable=true
+
+Then: systemctl restart geoclue
+EOF
+  fi
+}
+
+# --- non-interactive ---------------------------------------------------------
+# Anything not given on the command line keeps the value already in the file,
+# so "ws-geoloc --lon 5" moves the node east and leaves the rest alone.
+if (( BATCH )); then
+  LAT=${LAT_ARG:-$(cur_or 0 '')}
+  LON=${LON_ARG:-$(cur_or 1 '')}
+  ALT=${ALT_ARG:-$(cur_or 2 0)}
+  ACC=${ACC_ARG:-$(cur_or 3 1000)}
+  [[ -n $LAT ]] || die 10 "no latitude given and none usable in $GEOLOC_FILE (use --lat)"
+  [[ -n $LON ]] || die 10 "no longitude given and none usable in $GEOLOC_FILE (use --lon)"
+
+  printf '%s, %s   alt %s m   +/- %s m\n' "$LAT" "$LON" "$ALT" "$ACC"
+  write_geoloc "$LAT" "$LON" "$ALT" "$ACC"
+  exit 0
+fi
+
 # --- prompt ------------------------------------------------------------------
-[[ -t 0 ]] || die 1 "not a terminal; this is interactive (use --show to read)"
+[[ -t 0 ]] || die 1 "not a terminal; use --lat/--lon to set values, or --show to read them"
 
 # ask LABEL UNIT DEFAULT MIN MAX -> echoes accepted value (errors go to stderr)
 ask() {
@@ -127,43 +238,4 @@ printf '\n%s, %s   alt %s m   +/- %s m\n' "$LAT" "$LON" "$ALT" "$ACC"
 read -r -p "Write to $GEOLOC_FILE? [y/N] " confirm
 [[ ${confirm,,} == y* ]] || { echo "Aborted; nothing changed."; exit 1; }
 
-# --- write -------------------------------------------------------------------
-if [[ -e $GEOLOC_FILE ]]; then
-  backup="$GEOLOC_FILE.bak.$(date +%Y%m%d%H%M%S)"
-  cp -p -- "$GEOLOC_FILE" "$backup"
-  echo "Backed up to $backup"
-fi
-
-# Temp file in the same directory so the final rename is atomic.
-tmp=$(mktemp "$GEOLOC_FILE.XXXXXX")
-trap 'rm -f -- "$tmp"' EXIT
-
-cat >"$tmp" <<EOF
-# GeoClue static source - see geoclue(5), [static-source]
-$LAT	# latitude  (+N / -S)
-$LON	# longitude (+E / -W)
-$ALT	# altitude, metres
-$ACC	# accuracy radius, metres
-EOF
-
-chmod 600 "$tmp"
-getent passwd geoclue >/dev/null 2>&1 && chown geoclue "$tmp"
-mv -f -- "$tmp" "$GEOLOC_FILE"
-trap - EXIT
-echo "Wrote $GEOLOC_FILE"
-
-# The file is inert unless the static source is switched on.
-if [[ -r $GEOCLUE_CONF ]] && ! awk '
-      /^[[:space:]]*\[/ { in_s = ($0 ~ /^[[:space:]]*\[static-source\]/) }
-      in_s && /^[[:space:]]*enable[[:space:]]*=[[:space:]]*true/ { found = 1 }
-      END { exit !found }' "$GEOCLUE_CONF"; then
-  cat >&2 <<EOF
-
-Note: GeoClue will ignore this file until $GEOCLUE_CONF contains:
-
-    [static-source]
-    enable=true
-
-Then: systemctl restart geoclue
-EOF
-fi
+write_geoloc "$LAT" "$LON" "$ALT" "$ACC"

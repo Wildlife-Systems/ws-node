@@ -1,8 +1,20 @@
-.TH WS-GEOLOC 1 "September 2026" "ws-node 1.4.8" "WildlifeSystems Commands"
+.TH WS-GEOLOC 1 "September 2026" "ws-node 1.4.9" "WildlifeSystems Commands"
 .SH NAME
 ws-geoloc \- view and edit the static geolocation of a WildlifeSystems node
 .SH SYNOPSIS
 .B ws-geoloc
+.RB [ \-\-file
+.IR path ]
+.br
+.B ws-geoloc
+.RB [ \-\-lat
+.IR deg ]
+.RB [ \-\-lon
+.IR deg ]
+.RB [ \-\-alt
+.IR m ]
+.RB [ \-\-acc
+.IR m ]
 .RB [ \-\-file
 .IR path ]
 .br
@@ -11,7 +23,7 @@ ws-geoloc \- view and edit the static geolocation of a WildlifeSystems node
 .IR path ]
 .SH DESCRIPTION
 .B ws-geoloc
-interactively edits
+views and edits
 .IR /etc/geolocation ,
 the GeoClue static location source. This gives a node a fixed position when no
 other location source (GPS, WiFi, or modem) is available, which is the usual
@@ -30,8 +42,30 @@ longitude \-180 to 180, altitude \-500 to 9000, accuracy 1 to 1000000. Accuracy
 is a confidence radius, so an unknown position is expressed as a large number:
 roughly 100 m for a house, 5000 m a village, 25000 m a city, 100000 m a region.
 .PP
-Nothing is written until the summary is confirmed. An existing file is copied
-to a timestamped
+Given any of
+.BR \-\-lat ,
+.BR \-\-lon ,
+.BR \-\-alt ,
+or
+.BR \-\-acc ,
+the command does not prompt and does not ask for confirmation: it writes the
+values given and exits. This is the form to use from a script, a provisioning
+run, or over a non\-interactive
+.BR ssh (1)
+connection. Values that are not given keep whatever is already in the file, so
+.B ws-geoloc \-\-lon 5
+changes the longitude alone. Where the file has no usable value, altitude
+defaults to 0 and accuracy to 1000 m, but latitude and longitude have no
+default: setting a location for the first time needs both
+.B \-\-lat
+and
+.BR \-\-lon .
+A value that is not a number or is out of range is rejected with exit status
+10 before anything is written.
+.PP
+Nothing is written until the summary is confirmed, except in the
+non\-interactive form above, where the summary is printed and the write
+proceeds. An existing file is copied to a timestamped
 .I .bak
 file first, and the new contents are written to a temporary file in the same
 directory and renamed into place, so the geolocation file is never left
@@ -47,6 +81,31 @@ If it is not,
 .B ws-geoloc
 says so after writing.
 .SH OPTIONS
+.TP
+.BI \-\-lat " deg"
+Set the latitude, \-90 to 90, positive north. May also be spelled
+.BR \-\-latitude .
+.TP
+.BI \-\-lon " deg"
+Set the longitude, \-180 to 180, positive east. May also be spelled
+.BR \-\-longitude .
+.TP
+.BI \-\-alt " m"
+Set the altitude in metres, \-500 to 9000. Defaults to 0 when the file holds no
+usable value. May also be spelled
+.BR \-\-altitude .
+.TP
+.BI \-\-acc " m"
+Set the accuracy radius in metres, 1 to 1000000. Defaults to 1000 when the file
+holds no usable value. May also be spelled
+.BR \-\-accuracy .
+.PP
+Each of the four takes its value as a separate argument
+.RB ( "\-\-lat 4" )
+or after an equals sign
+.RB ( \-\-lat=4 ).
+Any of them switches off prompting, and none may be combined with
+.BR \-\-show .
 .TP
 .B \-\-show
 Print the current values and exit. Does not prompt.
@@ -95,6 +154,16 @@ The geolocation file is missing or malformed
 .TP
 .B 10
 Invalid argument
+.SH EXAMPLES
+.TP
+.B sudo ws-geoloc \-\-lat 51.4967 \-\-lon \-0.1764
+Set latitude and longitude, keeping the existing altitude and accuracy.
+.TP
+.B sudo ws-geoloc \-\-lon 5
+Change the longitude and leave everything else as it is.
+.TP
+.B sudo ws-geoloc \-\-lat 4 \-\-lon \-4 \-\-alt 12 \-\-acc 100
+Set all four values in one go.
 .SH SEE ALSO
 .BR geoclue (5),
 .BR ws-heartbeat (1),
