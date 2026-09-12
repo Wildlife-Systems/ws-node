@@ -13,7 +13,7 @@ Description: WildlifeSystems Audio Runner
 Package: ws-node
 Priority: optional
 Architecture: all
-Depends: ${shlibs:Depends}, ${misc:Depends}, curl, jq, sensor-control, sound-device-control, pi-pwr, pi-data
+Depends: ${shlibs:Depends}, ${misc:Depends}, curl, jq, sensor-control, sound-device-control, pi-pwr, pi-data (>= 0.2.0)
 Description: WildlifeSystems Audio Runner
  This package installs the ws-node software, which is used to manage
  audio, image, and sensor recording and uploads for WildlifeSystems.
