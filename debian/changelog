@@ -1,3 +1,15 @@
+ws-node (1.6.0) stable; urgency=medium
+
+  * Define /etc/ws/node.json, recording what the node is deployed as:
+    deployment_id, site_name, valid_from, location_source and vertical_datum.
+    sr copies deployment_id into every sensor reading
+  * Install an example at /usr/share/doc/ws-node/examples/node.json rather than
+    shipping the file itself to /etc/ws/, where it would become a conffile
+    carrying a placeholder deployment onto every node
+  * Document the format in the README
+
+ -- Ed Baker <ed@ebaker.me.uk>  Sat, 12 Sep 2026 17:00:00 +0100
+
 ws-node (1.5.0) stable; urgency=medium
 
   * Move ws-geoloc to pi-data, where it is installed as pi-geo. A node's
