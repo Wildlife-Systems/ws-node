@@ -2,3 +2,4 @@ usr/bin/* usr/bin
 etc/ws/* etc/ws
 lib/systemd/system/* lib/systemd/system
 usr/share/man/man1/* usr/share/man/man1
+examples/node.json usr/share/doc/ws-node/examples
